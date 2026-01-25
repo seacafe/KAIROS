@@ -85,23 +85,59 @@ Java 21의 **Virtual Threads**를 전면 도입하여 I/O Blocking 비용을 제
 
 ```mermaid
 graph TD
-    User["User / Dashboard"] -->|REST/WS| Gate[ApiGatekeeper]
+    %% Frontend & Entry
+    User([User / Dashboard]) -->|REST/WS| Gate[ApiGatekeeper<br/>(Rate Limiter)]
     
-    subgraph Core ["Backend Core (Virtual Threads)"]
-        Gate --> Nexus["Nexus (Strategist)"]
-        Nexus --> Agents["5 Analysts"]
-        Nexus --> Aegis["Aegis (Executor)"]
+    subgraph Core ["Backend Core (Java 21 Virtual Threads)"]
+        direction TB
         
-        Aegis -- "Runtime (Java)" --> KiwoomOrder["Kiwoom API"]
-        Aegis -- "Review (AI)" --> Gemini["Gemini API"]
+        %% Data Ingestion Layer
+        subgraph Analysts ["The 5 Analysts (Analysis Layer)"]
+            Sentinel[<b>Sentinel</b><br/>News & Risk<br/>(RSS/Naver)]
+            Vector[<b>Vector</b><br/>Tech & Patterns<br/>(NanoBanana)]
+            Sonar[<b>Sonar</b><br/>Order Flow<br/>(Program/Foreign)]
+            Axiom[<b>Axiom</b><br/>Fundamental<br/>(Financials)]
+            Resonance[<b>Resonance</b><br/>Sentiment<br/>(Macro/Index)]
+        end
+
+        %% Strategy Layer
+        Nexus{{<b>Nexus</b><br/>Strategist<br/>(Decision Brain)}}
         
-        Vector["Vector (Tech)"] -- "Signal" --> Nexus
-        Sentinel["Sentinel (News)"] -- "Kill Switch" --> Aegis
+        %% Execution Layer
+        subgraph Executor ["Execution Layer (Dual-Speed)"]
+            Aegis_Java[<b>Aegis Core</b><br/>Java Runtime<br/>(PEQ / Zero Latency)]
+            Aegis_AI[<b>Aegis Review</b><br/>Gemini Flash<br/>(Post-Trade Analysis)]
+        end
+
+        %% Internal Flows
+        Gate --> Nexus
+        
+        %% Analyst Signals to Nexus
+        Vector -->|Buy Signal<br/>(NanoBanana)| Nexus
+        Sonar -->|Valid/Fake<br/>(Supply/Demand)| Nexus
+        Axiom -->|Filter/Pass| Nexus
+        Resonance -->|Market Score| Nexus
+        Sentinel -->|Issue/Theme| Nexus
+
+        %% Nexus to Aegis
+        Nexus -->|Execution Order<br/>(Buy/Sell)| Aegis_Java
+        
+        %% Kill Switch Flow (Critical)
+        Sentinel -.->|<b>KILL SWITCH</b><br/>(Emergency Sell)| Aegis_Java
+        
+        %% Aegis Internal
+        Aegis_Java -.->|Trade Log| Aegis_AI
     end
     
-    subgraph External ["External World"]
-        KiwoomOrder --> Market["Stock Market"]
-        Crawling["Naver/RSS"] --> Sentinel
+    subgraph External ["External World & APIs"]
+        %% Data Sources
+        KiwoomWS["Kiwoom WebSocket<br/>(Real-time Tick)"] --> Vector & Sonar & Sentinel
+        Crawling["Naver API / RSS"] --> Sentinel
+        Investing["Global Macro RSS"] --> Resonance
+        
+        %% Execution & AI
+        Aegis_Java <==>|"REST (Trade)"| KiwoomREST["Kiwoom REST API<br/>(Order/Account)"]
+        Aegis_AI & Nexus & Analysts -.->|"Inference"| Gemini["Google Gemini API<br/>(Flash/Pro)"]
     end
 ```
 
