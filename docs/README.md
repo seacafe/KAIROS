@@ -85,23 +85,23 @@ Java 21의 **Virtual Threads**를 전면 도입하여 I/O Blocking 비용을 제
 
 ```mermaid
 graph TD
-    User[User / Dashboard] -->|REST/WS| Gate[ApiGatekeeper]
+    User["User / Dashboard"] -->|REST/WS| Gate[ApiGatekeeper]
     
     subgraph Core ["Backend Core (Virtual Threads)"]
-        Gate --> Nexus[Nexus (Strategist)]
-        Nexus --> Agents[5 Analysts]
-        Nexus --> Aegis[Aegis (Executor)]
+        Gate --> Nexus["Nexus (Strategist)"]
+        Nexus --> Agents["5 Analysts"]
+        Nexus --> Aegis["Aegis (Executor)"]
         
-        Aegis -- "Runtime (Java)" --> KiwoomOrder[Kiwoom API]
-        Aegis -- "Review (AI)" --> Gemini[Gemini API]
+        Aegis -- "Runtime (Java)" --> KiwoomOrder["Kiwoom API"]
+        Aegis -- "Review (AI)" --> Gemini["Gemini API"]
         
-        Vector[Vector (Tech)] -- "Signal" --> Nexus
-        Sentinel[Sentinel (News)] -- "Kill Switch" --> Aegis
+        Vector["Vector (Tech)"] -- "Signal" --> Nexus
+        Sentinel["Sentinel (News)"] -- "Kill Switch" --> Aegis
     end
     
     subgraph External ["External World"]
-        KiwoomOrder --> Market[Stock Market]
-        Crawling[Naver/RSS] --> Sentinel
+        KiwoomOrder --> Market["Stock Market"]
+        Crawling["Naver/RSS"] --> Sentinel
     end
 ```
 
