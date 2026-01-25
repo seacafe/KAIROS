@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { useSettings, useUpdateStrategy, useRssFeeds, useDeleteRssFeed } from '@/shared/api/hooks';
+import { AddRssFeedForm } from '@/features/settings/AddRssFeedForm';
 import { Trash2 } from 'lucide-react';
 
 /**
  * 설정 페이지.
  */
 export function SettingsPage() {
+    const [isAddFormOpen, setIsAddFormOpen] = useState(false);
     const { data: settings } = useSettings();
     const { data: rssFeeds } = useRssFeeds();
     const updateStrategy = useUpdateStrategy();
@@ -33,8 +36,8 @@ export function SettingsPage() {
                         <label
                             key={strategy.value}
                             className={`flex items-center justify-between rounded-lg border p-4 cursor-pointer transition-all ${settings?.strategyMode === strategy.value
-                                    ? 'border-primary bg-primary/10'
-                                    : 'border-border hover:border-muted-foreground'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border hover:border-muted-foreground'
                                 }`}
                         >
                             <div>
@@ -81,11 +84,19 @@ export function SettingsPage() {
                     <p className="text-muted-foreground">등록된 RSS 피드가 없습니다.</p>
                 )}
 
-                {/* TODO: RSS 추가 폼 */}
-                <button className="mt-4 w-full rounded-lg border border-dashed border-muted-foreground py-3 text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+                <button
+                    onClick={() => setIsAddFormOpen(true)}
+                    className="mt-4 w-full rounded-lg border border-dashed border-muted-foreground py-3 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                >
                     + RSS 피드 추가
                 </button>
             </section>
+
+            {/* RSS 추가 폼 모달 */}
+            <AddRssFeedForm
+                isOpen={isAddFormOpen}
+                onClose={() => setIsAddFormOpen(false)}
+            />
         </div>
     );
 }

@@ -5,6 +5,8 @@ import { MainLayout } from '@/widgets/layout/MainLayout'
 // Lazy Loading (frontendrule.md §4 Code Splitting)
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })))
 const JournalPage = lazy(() => import('@/pages/journal/JournalPage').then(m => ({ default: m.JournalPage })))
+const JournalDetailPage = lazy(() => import('@/pages/journal/JournalDetailPage').then(m => ({ default: m.JournalDetailPage })))
+const DeepAnalysisPage = lazy(() => import('@/pages/analysis/DeepAnalysisPage').then(m => ({ default: m.DeepAnalysisPage })))
 const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })))
 
 /**
@@ -32,6 +34,22 @@ export function AppRoutes() {
                     }
                 />
                 <Route
+                    path="journal/:date"
+                    element={
+                        <Suspense fallback={<PageLoader />}>
+                            <JournalDetailPage />
+                        </Suspense>
+                    }
+                />
+                <Route
+                    path="analysis"
+                    element={
+                        <Suspense fallback={<PageLoader />}>
+                            <DeepAnalysisPage />
+                        </Suspense>
+                    }
+                />
+                <Route
                     path="settings"
                     element={
                         <Suspense fallback={<PageLoader />}>
@@ -51,3 +69,4 @@ function PageLoader() {
         </div>
     )
 }
+

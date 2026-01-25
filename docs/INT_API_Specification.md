@@ -1,22 +1,24 @@
 # KAIROS Internal API Specification
 
-*   **Version:** 2.0.0 (Final)
-*   **Protocol:** REST over HTTP/1.1
-*   **Base URL:** `/api/v1`
-*   **Content-Type:** `application/json; charset=UTF-8`
-*   **Authentication:** Bearer Token (JWT) required in `Authorization` header.
+* **Version:** 2.0.0 (Final)
+* **Protocol:** REST over HTTP/1.1
+* **Base URL:** `/api/v1`
+* **Content-Type:** `application/json; charset=UTF-8`
+* **Authentication:** Bearer Token (JWT) required in `Authorization` header.
 
 ---
 
 ## 1. Dashboard & Account (자산 및 현황)
 
 ### 1.1 계좌 요약 조회
+
 현재 계좌의 예수금, 총 자산, 당일 손익 정보를 반환합니다. `ApiGatekeeper`를 통해 키움 API 캐시 데이터를 제공합니다.
 
-*   **Endpoint:** `GET /account/summary`
-*   **Request Headers:**
-    *   `Authorization`: Bearer {token}
-*   **Response Body:**
+* **Endpoint:** `GET /account/summary`
+* **Request Headers:**
+  * `Authorization`: Bearer {token}
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -37,12 +39,14 @@
     ```
 
 ### 1.2 보유 종목(잔고) 조회
+
 현재 보유 중인 종목 리스트와 실시간 수익률을 반환합니다.
 
-*   **Endpoint:** `GET /account/balance`
-*   **Request Headers:**
-    *   `Authorization`: Bearer {token}
-*   **Response Body:**
+* **Endpoint:** `GET /account/balance`
+* **Request Headers:**
+  * `Authorization`: Bearer {token}
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -67,12 +71,14 @@
 ## 2. Target Stocks (AI Strategy)
 
 ### 2.1 당일 추천(Target) 종목 리스트
+
 장전/장중 Nexus가 분석하여 선정한 종목 리스트입니다. **동적 가격 전략(Dynamic Pricing)** 정보가 포함됩니다.
 
-*   **Endpoint:** `GET /stocks/target`
-*   **Query Parameters:**
-    *   `date`: `YYYY-MM-DD` (Optional, Default: Today)
-*   **Response Body:**
+* **Endpoint:** `GET /stocks/target`
+* **Query Parameters:**
+  * `date`: `YYYY-MM-DD` (Optional, Default: Today)
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -97,12 +103,14 @@
     ```
 
 ### 2.2 종목 상세 AI 리포트
+
 특정 종목에 대해 각 에이전트(Flash)와 Nexus(Pro)가 생성한 상세 분석 리포트(Markdown)입니다.
 
-*   **Endpoint:** `GET /stocks/target/{stockCode}/report`
-*   **Path Parameters:**
-    *   `stockCode`: 종목코드 (예: 005930)
-*   **Response Body:**
+* **Endpoint:** `GET /stocks/target/{stockCode}/report`
+* **Path Parameters:**
+  * `stockCode`: 종목코드 (예: 005930)
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -125,15 +133,17 @@
 ## 3. Trading & History
 
 ### 3.1 매매 로그 조회
+
 시스템의 주문 접수, 체결, 취소 등의 이벤트 로그입니다.
 
-*   **Endpoint:** `GET /trades/logs`
-*   **Query Parameters:**
-    *   `page`: Page number (Default: 0)
-    *   `size`: Page size (Default: 20)
-    *   `date`: `YYYY-MM-DD` (Optional)
-    *   `type`: `ORDER`, `EXECUTION`, `CANCEL`, `ERROR` (Optional)
-*   **Response Body:**
+* **Endpoint:** `GET /trades/logs`
+* **Query Parameters:**
+  * `page`: Page number (Default: 0)
+  * `size`: Page size (Default: 20)
+  * `date`: `YYYY-MM-DD` (Optional)
+  * `type`: `ORDER`, `EXECUTION`, `CANCEL`, `ERROR` (Optional)
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -159,10 +169,12 @@
     ```
 
 ### 3.2 수동 주문 (비상용)
+
 관리자가 시스템 개입을 위해 수동으로 주문을 넣습니다.
 
-*   **Endpoint:** `POST /trade/manual`
-*   **Request Body:**
+* **Endpoint:** `POST /trade/manual`
+* **Request Body:**
+
     ```json
     {
       "stockCode": "005930",
@@ -172,7 +184,9 @@
       "quantity": 10        // 수량
     }
     ```
-*   **Response Body:**
+
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -184,12 +198,14 @@
     ```
 
 ### 3.3 매매 일지 & AI 복기 (Journal)
+
 장 마감 후 작성된 일지와 **Aegis/Nexus의 Dual Review** 내용을 조회합니다.
 
-*   **Endpoint:** `GET /journal/{date}`
-*   **Path Parameters:**
-    *   `date`: `YYYY-MM-DD`
-*   **Response Body:**
+* **Endpoint:** `GET /journal/{date}`
+* **Path Parameters:**
+  * `date`: `YYYY-MM-DD`
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -212,8 +228,10 @@
 ## 4. Settings & Control (설정 및 제어)
 
 ### 4.1 시스템 설정 조회
-*   **Endpoint:** `GET /settings`
-*   **Response Body:**
+
+* **Endpoint:** `GET /settings`
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -231,8 +249,10 @@
     ```
 
 ### 4.2 시스템 설정 변경
-*   **Endpoint:** `PUT /settings`
-*   **Request Body:**
+
+* **Endpoint:** `PUT /settings`
+* **Request Body:**
+
     ```json
     {
       "strategyMode": "AGGRESSIVE",
@@ -240,11 +260,14 @@
       "maxPortfolioWeight": 30
     }
     ```
-*   **Response Body:** `{"status": "SUCCESS", "data": "Settings updated."}`
+
+* **Response Body:** `{"status": "SUCCESS", "data": "Settings updated."}`
 
 ### 4.3 RSS 피드 관리
-*   **Endpoint:** `GET /settings/rss`
-*   **Response Body:**
+
+* **Endpoint:** `GET /settings/rss`
+* **Response Body:**
+
     ```json
     {
       "status": "SUCCESS",
@@ -253,13 +276,16 @@
       ]
     }
     ```
-*   **Endpoint:** `POST /settings/rss`
-    *   **Body:** `{ "name": "Source Name", "url": "https://..." }`
-*   **Endpoint:** `DELETE /settings/rss/{id}`
+
+* **Endpoint:** `POST /settings/rss`
+  * **Body:** `{ "name": "Source Name", "url": "https://..." }`
+* **Endpoint:** `DELETE /settings/rss/{id}`
 
 ### 4.4 시스템 상태 제어 (Kill Switch)
-*   **Endpoint:** `POST /system/control`
-*   **Request Body:**
+
+* **Endpoint:** `POST /system/control`
+* **Request Body:**
+
     ```json
     {
       "command": "STOP_TRADING" 
@@ -275,9 +301,10 @@
 
 프론트엔드가 구독(Subscribe)해야 할 WebSocket 토픽 명세입니다.
 
-*   **Endpoint:** `/ws-stomp`
-*   **Topic:** `/topic/alert`
-*   **Payload Format:**
+* **Endpoint:** `/ws-stomp`
+* **Topic:** `/topic/alert`
+* **Payload Format:**
+
     ```json
     {
         "type": "KILL_SWITCH",      // KILL_SWITCH, BUY_SIGNAL, SELL_SIGNAL, SYSTEM_ERROR
@@ -291,7 +318,8 @@
     }
     ```
 
-*   **Topic:** `/topic/trade` (실시간 체결 알림)
+* **Topic:** `/topic/trade` (실시간 체결 알림)
+
     ```json
     {
         "type": "EXECUTION",
@@ -302,4 +330,5 @@
         "timestamp": "2026-01-22T10:31:00"
     }
     ```
+
 --- END OF FILE INT_API_Specification.md ---

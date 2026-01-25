@@ -37,11 +37,18 @@
 - [x] AsyncConfig (@EnableAsync, @EnableScheduling)
 - [x] PEQ 우선순위 큐 (TradeExecutionService)
 
-### Phase 4: Frontend Integration
+### Phase 4: Frontend Integration ✅
 
-- [ ] Dashboard 페이지
-- [ ] Journal 페이지
-- [ ] Settings 페이지
+- [x] Layout & Navigation (Header, Sidebar, MainLayout)
+- [x] Dashboard 페이지 (TargetStockCard, 에이전트 상태, 최근 매매)
+- [x] Journal 목록 페이지
+- [x] Journal 상세 페이지 (AI 복기 markdown 렌더링)
+- [x] Settings 페이지 (투자 성향, RSS 관리)
+- [x] RSS 추가 폼 (React Hook Form + Zod)
+- [x] 캔들 차트 (CandlestickChart - Recharts)
+- [x] 자산 히트맵 (PortfolioHeatmap - Treemap)
+- [x] WebSocket 실시간 로그 (RealtimeLogViewer)
+- [x] Deep Analysis 페이지 (5인 에이전트 분석, Nexus 판단)
 
 ### Phase 5: Verification
 

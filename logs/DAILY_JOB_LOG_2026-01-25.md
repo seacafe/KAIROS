@@ -2,69 +2,81 @@
 
 ## 🛠️ 작업 및 수정 내역 (Changes)
 
-### Agent 구조 리팩토링
+### Phase 4: Frontend Integration ✅ (08:57~09:09)
 
-- **7개 AiClient 생성** (`domain/*/agent/*AiClient.java`)
-  - *이유:* LangChain4j @AiService 인터페이스를 agent 폴더에 집중
-  - *내용:* SentinelAiClient, AxiomAiClient, VectorAiClient, ResonanceAiClient, SonarAiClient, NexusAiClient, AegisReviewAiClient
+- **P1: 핵심 기능**
+  - `JournalDetailPage.tsx` - AI 복기 markdown 렌더링, 개선점 태그
+  - `AddRssFeedForm.tsx` - React Hook Form + Zod 검증 모달
+  - `SettingsPage.tsx` 수정 - RSS 폼 연동
+  - `AppRoutes.tsx` 수정 - `/journal/:date` 라우트 추가
 
-### DTO 패키지 정리
+- **P2: 시각화**
+  - `CandlestickChart.tsx` - Recharts 캔들차트 + 매매 타점 마커
+  - `PortfolioHeatmap.tsx` - 수익률 기반 자산 히트맵 (Treemap)
+  - `RealtimeLogViewer.tsx` - WebSocket 실시간 로그 뷰어
+  - `DashboardPage.tsx` 수정 - 히트맵, 로그뷰어 연동
 
-- **7개 DTO 이동 및 리네이밍** (`domain/*/dto/*Dto.java`)
-  - *이유:* `*Result` → `*Dto` 포스트픽스 통일, dto 폴더로 분리
-  - *내용:* NewsAnalysisDto, FundamentalAnalysisDto, TechnicalAnalysisDto, MarketSentimentDto, FlowAnalysisDto, StrategyDecisionDto, SlippageAnalysisDto
+- **P3: 고급 기능**
+  - `DeepAnalysisPage.tsx` - 5인 에이전트 분석, Nexus 판단
+  - `AppRoutes.tsx` 수정 - `/analysis` 라우트 추가
 
-### MapStruct 도입
+### Rules 확인 (08:52)
 
-- **build.gradle.kts**: MapStruct 의존성 추가
-  - *이유:* Entity ↔ DTO 변환 자동화
-  - *내용:* `mapstruct:1.5.5.Final`, `lombok-mapstruct-binding:0.2.0`
-
-- **4개 Mapper 생성** (`domain/*/mapper/*Mapper.java`)
-  - *내용:* AccountMapper, ExecutionMapper, StrategyMapper, JournalMapper
-
-### Controller Layer 리팩토링
-
-- **5개 Controller 수정**
-  - *이유:* Controller에서 비즈니스 로직 제거, Service 호출만 담당
-  - *내용:* AccountController, JournalController, SettingsController, TargetStockController, TradeLogController
-
-- **4개 Service 신규 생성**
-  - *내용:* AccountService, JournalService, SettingsService, TradeLogService
+- 총 **6개 Rule** 인식
+  - Global: user_global (자동 주입)
+  - Workspace: corerule.md, apiworks.md, domainrule.md
+  - Backend: backendrule_kairos.md (10KB, 145줄)
+  - Frontend: frontendrule.md (3.8KB, 72줄)
 
 ---
 
 ## 💡 기술적 상세 (Implementation Details)
 
-- **기술 활용:**
-  - LangChain4j `@AiService` - Gemini API 연동
-  - MapStruct `@Mapper(componentModel = "spring")` - Spring Bean으로 자동 등록
-  - Bucket4j - API Rate Limiting
+- **Frontend Stack:**
+  - React 19 + TanStack Query v5 + Zustand
+  - FSD Lite 구조 (app/entities/features/pages/shared/stores/widgets)
+  - Tailwind CSS + shadcn/ui
 
-- **의사결정:**
-  - AiClient는 LangChain4j 인터페이스만 포함, 비즈니스 로직은 Service로 분리
-  - DTO는 record 타입 사용으로 불변성 보장
-
-- **성능/보안:**
-  - ApiGatekeeper로 Kiwoom API 초당 4회 제한 준수
-  - Virtual Thread 활용으로 동시성 최적화
+- **시각화 라이브러리:**
+  - Recharts: 캔들차트, Treemap
+  - WebSocket: 실시간 로그 스트리밍
 
 ---
 
 ## 🧪 TDD 및 테스트 결과 (Testing)
 
-- **테스트 케이스:** 미실행 (구조 리팩토링 중)
+- **테스트 케이스:** Phase 5에서 진행 예정
 - **결과:** ⏳ Pending
-- **상세:** Gradle Refresh 후 빌드 테스트 필요
+- **상세:** B 옵션 선택 - Phase 4 구현 → Phase 5 테스트
 
 ---
 
 ## ⚠️ 특이사항 및 주의점 (Issues & Notes)
 
-1. **IDE 린트 오류:** "non-project file" 경고 발생 → Gradle Refresh 필요
-2. **누락 항목:**
-    - `Journal.updateDailyStats()`, `Journal.updateAiReview()` 메서드 추가 필요
-    - `UserSetting.updateStrategyMode()` 메서드 추가 필요
-3. **다음 작업:**
-    - Phase 3 WebSocket Event Bus 구현
-    - KillSwitchEvent 발행/구독 시스템
+1. **IDE 린트 오류:** Frontend 파일에서 `Cannot find module` 발생
+   - 원인: IDE가 frontend를 별도 프로젝트로 인식하지 않음
+   - 해결: `cd frontend && npm install` 실행 필요
+
+2. **추가 패키지 필요:**
+
+   ```bash
+   npm install react-markdown  # JournalDetailPage
+   ```
+
+3. **다음 작업 (Phase 5):**
+   - Rule 준수 여부 체크
+   - Backend JaCoCo 80%/95% 커버리지
+   - Frontend Vitest + MSW 테스트
+   - MarketSimulatorTest 구현
+
+---
+
+## 📊 현재 진행 상황
+
+| Phase | 상태 | 진행률 |
+|-------|------|--------|
+| Phase 1: Infrastructure | ✅ | 100% |
+| Phase 2: AI Integration | ✅ | 100% |
+| Phase 3: Trading Engine | ✅ | 100% |
+| Phase 4: Frontend | ✅ | 100% |
+| Phase 5: Verification | 🔲 | 0% |
