@@ -86,47 +86,47 @@ Java 21의 **Virtual Threads**를 전면 도입하여 I/O Blocking 비용을 제
 ```mermaid
 graph TD
     %% Frontend & Entry
-    User([User / Dashboard]) -->|REST/WS| Gate[ApiGatekeeper<br/>(Rate Limiter)]
+    User([User / Dashboard]) -->|REST/WS| Gate["ApiGatekeeper<br/>(Rate Limiter)"]
     
     subgraph Core ["Backend Core (Java 21 Virtual Threads)"]
         direction TB
         
         %% Data Ingestion Layer
         subgraph Analysts ["The 5 Analysts (Analysis Layer)"]
-            Sentinel[<b>Sentinel</b><br/>News & Risk<br/>(RSS/Naver)]
-            Vector[<b>Vector</b><br/>Tech & Patterns<br/>(NanoBanana)]
-            Sonar[<b>Sonar</b><br/>Order Flow<br/>(Program/Foreign)]
-            Axiom[<b>Axiom</b><br/>Fundamental<br/>(Financials)]
-            Resonance[<b>Resonance</b><br/>Sentiment<br/>(Macro/Index)]
+            Sentinel["<b>Sentinel</b><br/>News & Risk<br/>(RSS/Naver)"]
+            Vector["<b>Vector</b><br/>Tech & Patterns<br/>(NanoBanana)"]
+            Sonar["<b>Sonar</b><br/>Order Flow<br/>(Program/Foreign)"]
+            Axiom["<b>Axiom</b><br/>Fundamental<br/>(Financials)"]
+            Resonance["<b>Resonance</b><br/>Sentiment<br/>(Macro/Index)"]
         end
 
         %% Strategy Layer
-        Nexus{{<b>Nexus</b><br/>Strategist<br/>(Decision Brain)}}
+        Nexus{{"<b>Nexus</b><br/>Strategist<br/>(Decision Brain)"}}
         
         %% Execution Layer
         subgraph Executor ["Execution Layer (Dual-Speed)"]
-            Aegis_Java[<b>Aegis Core</b><br/>Java Runtime<br/>(PEQ / Zero Latency)]
-            Aegis_AI[<b>Aegis Review</b><br/>Gemini Flash<br/>(Post-Trade Analysis)]
+            Aegis_Java["<b>Aegis Core</b><br/>Java Runtime<br/>(PEQ / Zero Latency)"]
+            Aegis_AI["<b>Aegis Review</b><br/>Gemini Flash<br/>(Post-Trade Analysis)"]
         end
 
         %% Internal Flows
         Gate --> Nexus
         
         %% Analyst Signals to Nexus
-        Vector -->|Buy Signal<br/>(NanoBanana)| Nexus
-        Sonar -->|Valid/Fake<br/>(Supply/Demand)| Nexus
-        Axiom -->|Filter/Pass| Nexus
-        Resonance -->|Market Score| Nexus
-        Sentinel -->|Issue/Theme| Nexus
+        Vector -->|"Buy Signal<br/>(NanoBanana)"| Nexus
+        Sonar -->|"Valid/Fake<br/>(Supply/Demand)"| Nexus
+        Axiom -->|"Filter/Pass"| Nexus
+        Resonance -->|"Market Score"| Nexus
+        Sentinel -->|"Issue/Theme"| Nexus
 
         %% Nexus to Aegis
-        Nexus -->|Execution Order<br/>(Buy/Sell)| Aegis_Java
+        Nexus -->|"Execution Order<br/>(Buy/Sell)"| Aegis_Java
         
         %% Kill Switch Flow (Critical)
-        Sentinel -.->|<b>KILL SWITCH</b><br/>(Emergency Sell)| Aegis_Java
+        Sentinel -.->|"<b>KILL SWITCH</b><br/>(Emergency Sell)"| Aegis_Java
         
         %% Aegis Internal
-        Aegis_Java -.->|Trade Log| Aegis_AI
+        Aegis_Java -.->|"Trade Log"| Aegis_AI
     end
     
     subgraph External ["External World & APIs"]
