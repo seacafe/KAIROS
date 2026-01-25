@@ -37,7 +37,6 @@ replay_pid*
 **/out/
 
 ### IDE ###
-**/.agent/
 **/.idea/
 **/.vscode/
 **/*.iml
