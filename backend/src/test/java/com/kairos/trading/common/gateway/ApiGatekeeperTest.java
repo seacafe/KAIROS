@@ -26,6 +26,7 @@ class ApiGatekeeperTest {
     @BeforeEach
     void setUp() {
         gatekeeper = new ApiGatekeeper();
+        gatekeeper.initBuckets();
     }
 
     @Test

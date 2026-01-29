@@ -1,0 +1,7 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+
+BUILD SUCCESSFUL in 2s
+3 actionable tasks: 3 up-to-date

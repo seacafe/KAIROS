@@ -13,11 +13,6 @@ import java.util.Map;
 
 /**
  * Sentinel 뉴스 분석 서비스.
- * 
- * 역할:
- * 1. 장전: Naver Search API로 주도 테마 발굴
- * 2. 장중: RSS 피드(DART/뉴스)로 공시 및 속보 감시
- * 3. 위기 감지: Kill Switch 키워드 발견 시 즉시 경고
  */
 @Slf4j
 @Service
@@ -28,35 +23,15 @@ public class SentinelService {
     private final ApplicationEventPublisher eventPublisher;
 
     /**
-     * 뉴스/공시 텍스트를 AI로 분석한다.
+     * 뉴스를 분석하고 결과를 반환한다.
      */
     public NewsAnalysisDto analyzeNews(String newsText) {
-        log.debug("[Sentinel] 뉴스 분석 시작: {}...",
-                newsText.substring(0, Math.min(50, newsText.length())));
-
-        // 1. Kill Switch 키워드 사전 검사 (AI 호출 전 빠른 필터링)
-        if (containsKillSwitchKeyword(newsText)) {
-            log.warn("[Sentinel] Kill Switch 키워드 감지! 즉시 분석 수행.");
-        }
-
-        // 2. AI 분석 수행
-        var result = sentinelAiClient.analyzeNews(newsText);
-
-        // 3. 결과 로깅
-        if (result.requiresKillSwitch()) {
-            log.error("[Sentinel] ⚠️ KILL SWITCH 발동 필요: {} - {}",
-                    result.stockName(), result.summary());
-        } else if (result.isPositive()) {
-            log.info("[Sentinel] 호재 감지: {} (강도: {})",
-                    result.stockName(), result.materialStrength());
-        }
-
-        return result;
+        log.info("[Sentinel] 뉴스 분석 요청: {}", normalize(newsText));
+        return sentinelAiClient.analyze(newsText);
     }
 
     /**
      * AgentResponse 형식으로 변환하여 반환한다.
-     * Nexus에게 전달할 표준 형식.
      */
     public AgentResponse analyzeAndGetResponse(String newsText) {
         var result = analyzeNews(newsText);
@@ -70,16 +45,13 @@ public class SentinelService {
                 decision,
                 result.summary(),
                 Map.of(
-                        "stockCode", result.stockCode(),
-                        "stockName", result.stockName(),
+                        "stockCode", result.stockCode() != null ? result.stockCode() : "",
+                        "stockName", result.stockName() != null ? result.stockName() : "",
                         "keywords", result.keywords(),
                         "sentiment", result.sentiment(),
                         "killSwitch", result.killSwitch()));
     }
 
-    /**
-     * Kill Switch 키워드가 텍스트에 포함되어 있는지 확인한다.
-     */
     public boolean containsKillSwitchKeyword(String text) {
         return NewsAnalysisDto.KILL_SWITCH_KEYWORDS.stream()
                 .anyMatch(text::contains);
@@ -98,12 +70,10 @@ public class SentinelService {
     }
 
     private int normalizeScore(int materialStrength) {
+        // -100 ~ 100 -> 0 ~ 100
         return (materialStrength + 100) / 2;
     }
 
-    /**
-     * Kill Switch 이벤트를 발행한다.
-     */
     public void publishKillSwitch(String stockCode, String stockName, String reason) {
         log.error("[Sentinel] ⚠️ KILL SWITCH 발행: {} ({}) - {}", stockName, stockCode, reason);
         eventPublisher.publishEvent(new KillSwitchEvent(
@@ -112,5 +82,9 @@ public class SentinelService {
                 stockName,
                 reason,
                 "Sentinel"));
+    }
+
+    private String normalize(String text) {
+        return text != null && text.length() > 50 ? text.substring(0, 50) + "..." : text;
     }
 }

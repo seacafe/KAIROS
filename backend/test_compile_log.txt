@@ -1,0 +1,76 @@
+
+> Task :compileJava
+F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\flow\agent\SonarAgent.java:40: error: method analyzeFlow in interface SonarAiClient cannot be applied to given types;
+            FlowAnalysisDto result = sonarAiClient.analyzeFlow(stockCode, stockName, tradeData, programTradeData);
+                                                  ^
+  required: String,String,long,long,long,double
+  found:    String,String,String,String
+  reason: actual and formal argument lists differ in length
+F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\news\agent\SentinelAgent.java:39: error: cannot find symbol
+            NewsAnalysisDto result = sentinelAiClient.analyze(content);
+                                                     ^
+  symbol:   method analyze(String)
+  location: variable sentinelAiClient of type SentinelAiClient
+F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\strategy\agent\NexusAgent.java:45: error: method decide in interface NexusAiClient cannot be applied to given types;
+            return nexusAiClient.decide(reportsSummary, preference);
+                                ^
+  required: String,String,String,String
+  found:    String,String
+  reason: actual and formal argument lists differ in length
+F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\strategy\agent\NexusAgent.java:54: error: cannot find symbol
+                    Map.of("error", e.getMessage()));
+                    ^
+  symbol:   variable Map
+  location: class NexusAgent
+F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\technical\agent\VectorAgent.java:40: error: method analyzeChart in interface VectorAiClient cannot be applied to given types;
+            TechnicalAnalysisDto result = vectorAiClient.analyzeChart(stockCode, stockName, chartData, orderBookData);
+                                                        ^
+  required: String,String,long,double,double,double,long,long,String
+  found:    String,String,String,String
+  reason: actual and formal argument lists differ in length
+5 errors
+
+> Task :compileJava FAILED
+[Incubating] Problems report is available at: file:///F:/KAIROS/backend/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler output below.
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\news\agent\SentinelAgent.java:39: error: cannot find symbol
+              NewsAnalysisDto result = sentinelAiClient.analyze(content);
+                                                       ^
+    symbol:   method analyze(String)
+    location: variable sentinelAiClient of type SentinelAiClient
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\flow\agent\SonarAgent.java:40: error: method analyzeFlow in interface SonarAiClient cannot be applied to given types;
+              FlowAnalysisDto result = sonarAiClient.analyzeFlow(stockCode, stockName, tradeData, programTradeData);
+                                                    ^
+    required: String,String,long,long,long,double
+    found:    String,String,String,String
+    reason: actual and formal argument lists differ in length
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\strategy\agent\NexusAgent.java:45: error: method decide in interface NexusAiClient cannot be applied to given types;
+              return nexusAiClient.decide(reportsSummary, preference);
+                                  ^
+    required: String,String,String,String
+    found:    String,String
+    reason: actual and formal argument lists differ in length
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\technical\agent\VectorAgent.java:40: error: method analyzeChart in interface VectorAiClient cannot be applied to given types;
+              TechnicalAnalysisDto result = vectorAiClient.analyzeChart(stockCode, stockName, chartData, orderBookData);
+                                                          ^
+    required: String,String,long,double,double,double,long,long,String
+    found:    String,String,String,String
+    reason: actual and formal argument lists differ in length
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\domain\strategy\agent\NexusAgent.java:54: error: cannot find symbol
+                      Map.of("error", e.getMessage()));
+                      ^
+    symbol:   variable Map
+    location: class NexusAgent
+  5 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+BUILD FAILED in 5s
+1 actionable task: 1 executed

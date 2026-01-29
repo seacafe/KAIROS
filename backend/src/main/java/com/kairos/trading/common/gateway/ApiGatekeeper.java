@@ -71,8 +71,10 @@ public class ApiGatekeeper {
      * @throws IllegalArgumentException apiType 또는 action이 null인 경우
      */
     public <T> T execute(ApiType apiType, Supplier<T> action) {
-        Objects.requireNonNull(apiType, "ApiType은 null일 수 없습니다.");
-        Objects.requireNonNull(action, "Action(Supplier)은 null일 수 없습니다.");
+        if (apiType == null)
+            throw new IllegalArgumentException("ApiType은 null일 수 없습니다.");
+        if (action == null)
+            throw new IllegalArgumentException("Action(Supplier)은 null일 수 없습니다.");
 
         var bucket = buckets.get(apiType);
         if (bucket == null) {
