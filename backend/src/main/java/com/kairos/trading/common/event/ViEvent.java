@@ -45,7 +45,7 @@ public class ViEvent extends org.springframework.context.ApplicationEvent {
         return triggerPrice;
     }
 
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime getEventTime() {
         return timestamp;
     }
 

@@ -40,7 +40,7 @@ public class GeminiConfig {
                 .temperature(0.1)
                 .topP(0.8)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -54,7 +54,7 @@ public class GeminiConfig {
                 .temperature(0.0)
                 .topP(0.95)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -68,7 +68,7 @@ public class GeminiConfig {
                 .temperature(0.2)
                 .topP(0.85)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -82,7 +82,7 @@ public class GeminiConfig {
                 .temperature(0.6)
                 .topP(0.9)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -96,7 +96,7 @@ public class GeminiConfig {
                 .temperature(0.1)
                 .topP(0.8)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class GeminiConfig {
                 .temperature(0.2)
                 .topP(0.9)
                 .maxOutputTokens(8192)
-                .responseMimeType("application/json")
+
                 .build();
     }
 
@@ -124,7 +124,7 @@ public class GeminiConfig {
                 .temperature(0.1)
                 .topP(0.8)
                 .maxOutputTokens(4096)
-                .responseMimeType("application/json")
+
                 .build();
     }
 }

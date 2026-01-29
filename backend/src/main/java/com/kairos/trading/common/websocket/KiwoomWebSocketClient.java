@@ -3,6 +3,7 @@ package com.kairos.trading.common.websocket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kairos.trading.common.event.ProgramTradeEvent;
+import reactor.util.retry.Retry;
 import com.kairos.trading.common.event.TickDataEvent;
 import com.kairos.trading.common.event.ViEvent;
 import jakarta.annotation.PostConstruct;
@@ -78,8 +79,7 @@ public class KiwoomWebSocketClient {
                         .doOnError(e -> log.error("WebSocket 에러", e))
                         .doOnComplete(() -> log.info("WebSocket 연결 종료"))
                         .then())
-                .retryWhen(retry -> retry
-                        .fixedDelay(5, Duration.ofSeconds(5))
+                .retryWhen(Retry.fixedDelay(5, Duration.ofSeconds(5))
                         .doBeforeRetry(signal -> log.warn("WebSocket 재연결 시도: {}", signal.totalRetries())))
                 .subscribe();
     }

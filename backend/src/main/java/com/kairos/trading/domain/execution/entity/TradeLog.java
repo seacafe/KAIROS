@@ -33,10 +33,16 @@ public class TradeLog {
     @Column(name = "stock_code", nullable = false, length = 10)
     private String stockCode;
 
+    @Column(name = "stock_name", length = 50)
+    private String stockName;
+
     // ===== Execution Details =====
 
     @Column(name = "trade_type", length = 10)
     private String tradeType; // BUY, SELL
+
+    @Column(name = "profit_loss", precision = 15, scale = 0)
+    private BigDecimal profitLoss;
 
     @Column(name = "order_price", precision = 10, scale = 0)
     private BigDecimal orderPrice;

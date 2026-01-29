@@ -80,8 +80,10 @@ public class NexusService {
                 .decision(decision.decision())
                 .riskLevel(decision.riskLevel())
                 .nexusScore(decision.finalScore())
-                .targetPrice(BigDecimal.valueOf(decision.targetPrice()))
-                .stopLoss(BigDecimal.valueOf(decision.stopLossPrice()))
+                .originalTargetPrice(BigDecimal.valueOf(decision.targetPrice()))
+                .currentTargetPrice(BigDecimal.valueOf(decision.targetPrice()))
+                .originalStopLoss(BigDecimal.valueOf(decision.stopLossPrice()))
+                .currentStopLoss(BigDecimal.valueOf(decision.stopLossPrice()))
                 .nexusReason(decision.reasoning())
                 .status("WATCHING")
                 .build();

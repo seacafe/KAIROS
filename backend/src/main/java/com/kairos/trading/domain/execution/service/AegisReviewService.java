@@ -72,7 +72,7 @@ public class AegisReviewService {
 
         double avgSlippage = todayLogs.stream()
                 .filter(t -> t.getSlippageRate() != null)
-                .mapToDouble(TradeLog::getSlippageRate)
+                .mapToDouble(t -> t.getSlippageRate().doubleValue())
                 .average()
                 .orElse(0.0);
 

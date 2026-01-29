@@ -1,7 +1,7 @@
 package com.kairos.trading.domain.news.service;
 
 import com.kairos.trading.common.event.KillSwitchEvent;
-import com.kairos.trading.domain.news.agent.NewsAnalysisResult;
+
 import com.kairos.trading.domain.news.entity.RssFeedConfig;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;

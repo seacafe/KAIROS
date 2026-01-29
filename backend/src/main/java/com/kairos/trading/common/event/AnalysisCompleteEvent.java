@@ -14,12 +14,48 @@ public class AnalysisCompleteEvent extends ApplicationEvent {
     private final String stockCode;
     private final String stockName;
     private final List<AgentResponse> reports;
+    private String analysisType;
+    private int score;
+    private long price;
+    private String description;
 
+    // Constructor for Multi-Agent Analysis (Nexus)
     public AnalysisCompleteEvent(Object source, String stockCode, String stockName, List<AgentResponse> reports) {
         super(source);
         this.stockCode = stockCode;
         this.stockName = stockName;
         this.reports = reports;
+        this.analysisType = "COMPREHENSIVE";
+        this.score = getAverageScore();
+    }
+
+    // Constructor for Single Agent Analysis (TradingEventListener)
+    public AnalysisCompleteEvent(Object source, String stockCode, String stockName, String analysisType, int score,
+            long price, String description) {
+        super(source);
+        this.stockCode = stockCode;
+        this.stockName = stockName;
+        this.analysisType = analysisType;
+        this.score = score;
+        this.price = price;
+        this.description = description;
+        this.reports = null;
+    }
+
+    public String getAnalysisType() {
+        return analysisType;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String getStockCode() {

@@ -51,7 +51,7 @@ public class TickDataEvent extends org.springframework.context.ApplicationEvent 
         return changeRate;
     }
 
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime getEventTime() {
         return timestamp;
     }
 }

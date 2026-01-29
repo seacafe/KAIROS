@@ -43,7 +43,7 @@ public class ProgramTradeEvent extends org.springframework.context.ApplicationEv
         return programNet;
     }
 
-    public LocalDateTime getTimestamp() {
+    public LocalDateTime getEventTime() {
         return timestamp;
     }
 
