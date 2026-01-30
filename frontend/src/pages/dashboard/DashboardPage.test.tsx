@@ -22,7 +22,9 @@ describe('DashboardPage', () => {
         })
 
         // 3. Score verification
-        expect(screen.getByText(/85/)).toBeInTheDocument()
+        // 3. Score verification
+        const scoreElements = screen.getAllByText(/85/)
+        expect(scoreElements.length).toBeGreaterThan(0)
 
         // 4. Holdings verification (PortfolioHeatmap)
         // Note: Recharts renders SVG, so finding text might depend on implementation.

@@ -1,0 +1,48 @@
+
+> Task :compileJava FAILED
+F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:8: error: cannot find symbol
+import com.kairos.trading.domain.fundamental.dto.StockInfoResponse;
+                                                ^
+  symbol:   class StockInfoResponse
+  location: package com.kairos.trading.domain.fundamental.dto
+F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:9: error: cannot find symbol
+import com.kairos.trading.domain.news.dto.OAuthTokenResponse;
+                                         ^
+  symbol:   class OAuthTokenResponse
+  location: package com.kairos.trading.domain.news.dto
+F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:61: error: cannot find symbol
+    public OAuthTokenResponse issueToken() {
+           ^
+  symbol:   class OAuthTokenResponse
+  location: class KiwoomClient
+3 errors
+[Incubating] Problems report is available at: file:///F:/KAIROS/backend/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler output below.
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:8: error: cannot find symbol
+  import com.kairos.trading.domain.fundamental.dto.StockInfoResponse;
+                                                  ^
+    symbol:   class StockInfoResponse
+    location: package com.kairos.trading.domain.fundamental.dto
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:9: error: cannot find symbol
+  import com.kairos.trading.domain.news.dto.OAuthTokenResponse;
+                                           ^
+    symbol:   class OAuthTokenResponse
+    location: package com.kairos.trading.domain.news.dto
+  F:\KAIROS\backend\src\main\java\com\kairos\trading\common\client\KiwoomClient.java:61: error: cannot find symbol
+      public OAuthTokenResponse issueToken() {
+             ^
+    symbol:   class OAuthTokenResponse
+    location: class KiwoomClient
+  3 errors
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to get full insights.
+
+BUILD FAILED in 5s
+1 actionable task: 1 executed

@@ -1,0 +1,473 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources UP-TO-DATE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+
+KiwoomClient 테스트 > 연속조회 헤더가 올바르게 처리된다 (cont-yn) STANDARD_OUT
+    23:56:30.946 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+KiwoomClient 테스트 > 연속조회 헤더가 올바르게 처리된다 (cont-yn) PASSED
+
+KiwoomClient 테스트 > 토큰 발급 실패 시 예외 발생 STANDARD_OUT
+    23:56:32.108 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+    23:56:32.197 [Test worker] INFO com.kairos.trading.common.client.KiwoomClient -- 키움 API 토큰 발급 요청
+    23:56:32.222 [Test worker] ERROR com.kairos.trading.common.client.KiwoomClient -- 토큰 발급 실패: 401 UNAUTHORIZED - Unauthorized
+
+KiwoomClient 테스트 > 토큰 발급 실패 시 예외 발생 PASSED
+
+KiwoomClient 테스트 > 토큰 발급 성공 (au10001) STANDARD_OUT
+    23:56:32.256 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+    23:56:32.258 [Test worker] INFO com.kairos.trading.common.client.KiwoomClient -- 키움 API 토큰 발급 요청
+
+KiwoomClient 테스트 > 토큰 발급 성공 (au10001) PASSED
+
+KiwoomClient 테스트 > 주식 기본정보 조회 성공 (ka10001) STANDARD_OUT
+    23:56:32.401 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+KiwoomClient 테스트 > 주식 기본정보 조회 성공 (ka10001) PASSED
+
+KiwoomClient 테스트 > Rate Limit 초과 응답(429) 시 예외 발생 STANDARD_OUT
+    23:56:32.417 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+    23:56:32.427 [Test worker] WARN com.kairos.trading.common.client.KiwoomClient -- 키움 API Rate Limit 초과
+
+KiwoomClient 테스트 > Rate Limit 초과 응답(429) 시 예외 발생 PASSED
+
+KiwoomClient 테스트 > API 타임아웃 시 예외 발생 STANDARD_OUT
+    23:56:32.430 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+    23:56:37.437 [Test worker] ERROR com.kairos.trading.common.client.KiwoomClient -- 주식정보 조회 중 예외 발생
+    org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:7205/api/dostk/stkinfo": Read timed out
+    	at org.springframework.web.client.DefaultRestClient$DefaultRequestBodyUriSpec.createResourceAccessException(DefaultRestClient.java:692)
+    	at org.springframework.web.client.DefaultRestClient$DefaultRequestBodyUriSpec.exchangeInternal(DefaultRestClient.java:577)
+    	at org.springframework.web.client.DefaultRestClient$DefaultRequestBodyUriSpec.exchange(DefaultRestClient.java:535)
+    	at org.springframework.web.client.RestClient$RequestHeadersSpec.exchange(RestClient.java:677)
+    	at org.springframework.web.client.DefaultRestClient$DefaultResponseSpec.executeAndExtract(DefaultRestClient.java:809)
+    	at org.springframework.web.client.DefaultRestClient$DefaultResponseSpec.body(DefaultRestClient.java:745)
+    	at com.kairos.trading.common.client.KiwoomClient.lambda$getStockInfo$6(KiwoomClient.java:110)
+    	at com.kairos.trading.common.gateway.ApiGatekeeper.execute(ApiGatekeeper.java:97)
+    	at com.kairos.trading.common.client.KiwoomClient.getStockInfo(KiwoomClient.java:92)
+    	at com.kairos.trading.common.client.KiwoomClientTest.lambda$getStockInfo_shouldThrowException_whenTimeout$2(KiwoomClientTest.java:183)
+    	at org.assertj.core.api.ThrowableAssert.catchThrowable(ThrowableAssert.java:63)
+    	at org.assertj.core.api.AssertionsForClassTypes.catchThrowable(AssertionsForClassTypes.java:904)
+    	at org.assertj.core.api.Assertions.catchThrowable(Assertions.java:1470)
+    	at org.assertj.core.api.Assertions.assertThatThrownBy(Assertions.java:1313)
+    	at com.kairos.trading.common.client.KiwoomClientTest.getStockInfo_shouldThrowException_whenTimeout(KiwoomClientTest.java:183)
+    	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+    	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:767)
+    	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+    	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+    	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+    	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+    	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+    	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+    	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+    	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+    	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+    	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+    	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+    	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+    	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+    	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$8(TestMethodTestDescriptor.java:217)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
+    	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
+    	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+    	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+    	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+    	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+    	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+    	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+    	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+    	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+    	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+    	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+    	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+    	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+    	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+    	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+    	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+    	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+    	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+    	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:124)
+    	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:99)
+    	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:94)
+    	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:63)
+    	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+    	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+    	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+    	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+    	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:92)
+    	at jdk.proxy2/jdk.proxy2.$Proxy6.stop(Unknown Source)
+    	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:200)
+    	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:132)
+    	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:103)
+    	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:63)
+    	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+    	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:121)
+    	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:71)
+    	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+    	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+    Caused by: java.net.SocketTimeoutException: Read timed out
+    	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+    	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)
+    	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+    	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+    	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+    	at java.base/java.io.BufferedInputStream.fill(BufferedInputStream.java:291)
+    	at java.base/java.io.BufferedInputStream.read1(BufferedInputStream.java:347)
+    	at java.base/java.io.BufferedInputStream.implRead(BufferedInputStream.java:420)
+    	at java.base/java.io.BufferedInputStream.read(BufferedInputStream.java:399)
+    	at java.base/sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:827)
+    	at java.base/sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:759)
+    	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1720)
+    	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1629)
+    	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:531)
+    	at org.springframework.http.client.SimpleClientHttpRequest.executeInternal(SimpleClientHttpRequest.java:88)
+    	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:71)
+    	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:81)
+    	at org.springframework.web.client.DefaultRestClient$DefaultRequestBodyUriSpec.exchangeInternal(DefaultRestClient.java:571)
+    	... 94 common frames omitted
+
+KiwoomClient 테스트 > API 타임아웃 시 예외 발생 PASSED
+
+ApiGatekeeper 테스트 > Naver API는 초당 10회까지 허용된다 STANDARD_OUT
+    23:56:37.957 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Naver API는 초당 10회까지 허용된다 PASSED
+
+ApiGatekeeper 테스트 > 동시에 여러 스레드에서 호출해도 Rate Limit이 지켜진다 STANDARD_OUT
+    23:56:37.959 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > 동시에 여러 스레드에서 호출해도 Rate Limit이 지켜진다 PASSED
+
+ApiGatekeeper 테스트 > Kiwoom API 5번째 호출은 대기 후 실행된다 STANDARD_OUT
+    23:56:39.482 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Kiwoom API 5번째 호출은 대기 후 실행된다 PASSED
+
+ApiGatekeeper 테스트 > Null Supplier는 예외를 발생시킨다 STANDARD_OUT
+    23:56:39.742 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Null Supplier는 예외를 발생시킨다 PASSED
+
+ApiGatekeeper 테스트 > Supplier가 예외를 던지면 그대로 전파된다 STANDARD_OUT
+    23:56:39.744 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Supplier가 예외를 던지면 그대로 전파된다 PASSED
+
+ApiGatekeeper 테스트 > Gemini API는 분당 1000회까지 허용된다 STANDARD_OUT
+    23:56:39.745 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Gemini API는 분당 1000회까지 허용된다 PASSED
+
+ApiGatekeeper 테스트 > Null ApiType은 예외를 발생시킨다 STANDARD_OUT
+    23:56:39.747 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Null ApiType은 예외를 발생시킨다 PASSED
+
+ApiGatekeeper 테스트 > Kiwoom API는 초당 4회까지 즉시 실행된다 STANDARD_OUT
+    23:56:39.748 [Test worker] INFO com.kairos.trading.common.gateway.ApiGatekeeper -- ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+
+ApiGatekeeper 테스트 > Kiwoom API는 초당 4회까지 즉시 실행된다 PASSED
+
+Sentinel(NewsAgent) Unit Test > 중립적 뉴스는 WATCH 판정 STANDARD_ERROR
+    Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+    WARNING: A Java agent has been loaded dynamically (C:\Users\BryanShin\scoop\apps\gradle\current\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.15.11\a38b16385e867f59a641330f0362ebe742788ed8\byte-buddy-agent-1.15.11.jar)
+    WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+    WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+    WARNING: Dynamic loading of agents will be disallowed by default in a future release
+
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :test
+
+Sentinel(NewsAgent) Unit Test > 중립적 뉴스는 WATCH 판정 STANDARD_OUT
+    23:56:41.041 [Test worker] INFO com.kairos.trading.domain.news.agent.SentinelAgent -- [Sentinel] 분석 시작 - Samsung (005930): 주주총회 소집 공고
+
+Sentinel(NewsAgent) Unit Test > 중립적 뉴스는 WATCH 판정 PASSED
+
+Sentinel(NewsAgent) Unit Test > 횡령 공시 감지 시 Kill Switch 및 ALERT 판정 STANDARD_OUT
+    23:56:41.061 [Test worker] INFO com.kairos.trading.domain.news.agent.SentinelAgent -- [Sentinel] 분석 시작 - BadCorp (123456): 대표이사 횡령 혐의 발생
+
+Sentinel(NewsAgent) Unit Test > 횡령 공시 감지 시 Kill Switch 및 ALERT 판정 PASSED
+
+Sentinel(NewsAgent) Unit Test > 호재 뉴스 분석 시 BUY 판정 및 높은 점수 STANDARD_OUT
+    23:56:41.066 [Test worker] INFO com.kairos.trading.domain.news.agent.SentinelAgent -- [Sentinel] 분석 시작 - Samsung (005930): 삼성전자, HBM3E 반도체 대량 수주 계약 체결.
+
+Sentinel(NewsAgent) Unit Test > 호재 뉴스 분석 시 BUY 판정 및 높은 점수 PASSED
+
+NanoBananaCalculator 테스트 > 역배열(MA5 < MA20 < MA60)이면 하락 추세 PASSED
+
+NanoBananaCalculator 테스트 > 이평선이 분산되면 수렴도가 낮아야 한다 PASSED
+
+NanoBananaCalculator 테스트 > 이격도: 현재가가 이평선 위에 있으면 양수 PASSED
+
+NanoBananaCalculator 테스트 > 거래량이 2배 이상이면 급증으로 판정 PASSED
+
+NanoBananaCalculator 테스트 > NanoBanana 패턴: 거래량 부족 시 미감지 PASSED
+
+NanoBananaCalculator 테스트 > 이동평균 계산 PASSED
+
+NanoBananaCalculator 테스트 > 정배열(MA5 > MA20 > MA60)이면 상승 추세 PASSED
+
+NanoBananaCalculator 테스트 > NanoBanana 패턴: 수렴도 높고, 거래량 폭발, 정배열 STANDARD_OUT
+    23:56:41.089 [Test worker] INFO com.kairos.trading.domain.technical.service.NanoBananaCalculator -- [NanoBanana] 🍌 패턴 감지! 수렴도=0.85, 거래량=2.5배
+
+NanoBananaCalculator 테스트 > NanoBanana 패턴: 수렴도 높고, 거래량 폭발, 정배열 PASSED
+
+NanoBananaCalculator 테스트 > 이평선이 밀집되면 수렴도가 높아야 한다 PASSED
+
+MarketSimulator 통합 테스트 STANDARD_OUT
+    23:56:41.314 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.kairos.trading.integration.MarketSimulatorTest]: MarketSimulatorTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+    23:56:41.638 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.kairos.trading.KairosTradingApplication for test class com.kairos.trading.integration.MarketSimulatorTest
+
+      .   ____          _            __ _ _
+     /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+    ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+     \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+      '  |____| .__|_| |_|_| |_\__, | / / / /
+     =========|_|==============|___/=/_/_/_/
+
+     :: Spring Boot ::                (v3.4.1)
+
+    23:56:42.779 [background-preinit] [] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+    23:56:43.011 [Test worker] [] INFO  c.k.t.i.MarketSimulatorTest - Starting MarketSimulatorTest using Java 21.0.9 with PID 74472 (started by BryanShin in F:\KAIROS\backend)
+    23:56:43.013 [Test worker] [] INFO  c.k.t.i.MarketSimulatorTest - The following 1 profile is active: "test"
+    23:56:44.831 [Test worker] [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+    23:56:45.184 [Test worker] [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 337 ms. Found 7 JPA repository interfaces.
+    23:56:47.250 [Test worker] [] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+    23:56:47.403 [Test worker] [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+    23:56:47.508 [Test worker] [] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+    23:56:47.829 [Test worker] [] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+    23:56:47.904 [Test worker] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+    23:56:48.439 [Test worker] [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+    23:56:48.443 [Test worker] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+    23:56:48.575 [Test worker] [] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+    	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+    	Database driver: undefined/unknown
+    	Database version: 2.3.232
+    	Autocommit mode: undefined/unknown
+    	Isolation level: undefined/unknown
+    	Minimum pool size: undefined/unknown
+    	Maximum pool size: undefined/unknown
+    23:56:50.451 [Test worker] [] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+    23:56:50.477 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists account cascade 
+    23:56:50.483 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists holding cascade 
+    23:56:50.483 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists journal cascade 
+    23:56:50.484 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists rss_feed cascade 
+    23:56:50.484 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists rss_feed_config cascade 
+    23:56:50.484 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists target_stock cascade 
+    23:56:50.485 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists trade_log cascade 
+    23:56:50.485 [Test worker] [] DEBUG org.hibernate.SQL - 
+        drop table if exists user_setting cascade 
+    23:56:50.494 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table account (
+            d2_deposit numeric(18,2),
+            daily_profit numeric(18,2),
+            deposit numeric(18,2),
+            total_asset numeric(18,2),
+            id bigint generated by default as identity,
+            updated_at timestamp(6),
+            account_no varchar(20) not null unique,
+            primary key (id)
+        )
+    23:56:50.515 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table holding (
+            avg_price numeric(18,2),
+            current_price numeric(18,2),
+            profit_loss numeric(18,2),
+            profit_rate float(53),
+            quantity integer not null,
+            account_id bigint not null,
+            id bigint generated by default as identity,
+            updated_at timestamp(6),
+            stock_code varchar(10) not null,
+            stock_name varchar(50) not null,
+            primary key (id)
+        )
+    23:56:50.519 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table journal (
+            date date not null unique,
+            total_profit_loss numeric(18,2),
+            trade_count integer,
+            win_rate numeric(5,2),
+            best_trade_log_id bigint,
+            created_at timestamp(6),
+            id bigint generated by default as identity,
+            worst_trade_log_id bigint,
+            ai_review_content TEXT,
+            improvement_points TEXT,
+            primary key (id)
+        )
+    23:56:50.521 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table rss_feed (
+            is_active boolean,
+            polling_interval_sec integer,
+            id bigint generated by default as identity,
+            category varchar(20),
+            name varchar(100) not null,
+            url varchar(500) not null,
+            primary key (id)
+        )
+    23:56:50.524 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table rss_feed_config (
+            is_active boolean,
+            id bigint generated by default as identity,
+            category varchar(20),
+            name varchar(50),
+            url varchar(255) not null unique,
+            primary key (id)
+        )
+    23:56:50.527 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table target_stock (
+            base_date date not null,
+            current_stop_loss numeric(10,0),
+            current_target_price numeric(10,0),
+            flow_score integer,
+            fund_score integer,
+            news_score integer,
+            nexus_score integer,
+            original_stop_loss numeric(10,0),
+            original_target_price numeric(10,0),
+            tech_score integer,
+            created_at timestamp(6),
+            id bigint generated by default as identity,
+            risk_level varchar(10),
+            stock_code varchar(10) not null,
+            decision varchar(20),
+            status varchar(20),
+            strategy_mode varchar(20),
+            stock_name varchar(50),
+            nexus_reason TEXT,
+            primary key (id),
+            unique (base_date, stock_code)
+        )
+    23:56:50.529 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table trade_log (
+            filled_price numeric(10,0),
+            market_score_snapshot integer,
+            order_price numeric(10,0),
+            profit_loss numeric(15,0),
+            quantity integer,
+            slippage_rate numeric(5,2),
+            executed_at timestamp(6),
+            id bigint generated by default as identity,
+            target_stock_id bigint,
+            stock_code varchar(10) not null,
+            trade_type varchar(10),
+            order_id varchar(20),
+            status varchar(20),
+            stock_name varchar(50),
+            agent_msg varchar(255),
+            primary key (id)
+        )
+    23:56:50.532 [Test worker] [] DEBUG org.hibernate.SQL - 
+        create table user_setting (
+            max_loss_per_trade float(53),
+            max_position_count integer,
+            max_position_ratio float(53),
+            re_entry_allowed boolean,
+            id bigint generated by default as identity,
+            strategy_mode varchar(20),
+            api_rate_limit_config TEXT,
+            user_id varchar(255) unique,
+            primary key (id)
+        )
+    23:56:50.534 [Test worker] [] DEBUG org.hibernate.SQL - 
+        alter table if exists holding 
+           add constraint FKl3fvhua25fo3eyt2qhghfyw60 
+           foreign key (account_id) 
+           references account
+    23:56:50.556 [Test worker] [] DEBUG org.hibernate.SQL - 
+        alter table if exists trade_log 
+           add constraint FKbvkp5qm23og89qab6rkc54ljm 
+           foreign key (target_stock_id) 
+           references target_stock
+    23:56:50.563 [Test worker] [] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+    23:56:50.608 [Test worker] [] INFO  c.k.t.common.gateway.ApiGatekeeper - ApiGatekeeper 초기화 완료 - 3 개의 API 버킷 생성
+    23:56:50.640 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Vector 모델 초기화 (gemini-2.5-flash, temp=0.2)
+    23:56:50.797 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - VectorAiClient 생성 (temp=0.2)
+    23:56:50.826 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Sonar 모델 초기화 (gemini-2.5-flash, temp=0.1)
+    23:56:50.837 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - SonarAiClient 생성 (temp=0.1)
+    23:56:51.437 [Test worker] [] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+    23:56:52.553 [Test worker] [] INFO  c.k.t.c.w.KiwoomWebSocketClient - KiwoomWebSocketClient 초기화 완료
+    23:56:52.849 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Aegis Review 모델 초기화 (gemini-2.5-flash, temp=0.1)
+    23:56:52.859 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - AegisReviewAiClient 생성 (temp=0.1)
+    23:56:52.867 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Axiom 모델 초기화 (gemini-2.5-flash, temp=0.0)
+    23:56:52.877 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - AxiomAiClient 생성 (temp=0.0)
+    23:56:52.954 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Sentinel 모델 초기화 (gemini-2.5-flash, temp=0.1)
+    23:56:52.961 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - SentinelAiClient 생성 (temp=0.1)
+    23:56:52.968 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Resonance 모델 초기화 (gemini-2.5-flash, temp=0.6)
+    23:56:52.977 [Test worker] [] INFO  c.k.trading.common.ai.AiClientConfig - ResonanceAiClient 생성 (temp=0.6)
+    23:56:53.029 [Test worker] [] INFO  c.k.trading.common.ai.GeminiConfig - Nexus 모델 초기화 (gemini-2.5-pro, temp=0.2)
+    23:56:54.447 [Test worker] [] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+    23:56:54.527 [Test worker] [] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+    23:56:54.637 [Test worker] [] INFO  c.k.t.i.MarketSimulatorTest - Started MarketSimulatorTest in 12.742 seconds (process running for 27.256)
+
+MarketSimulator 통합 테스트 > [Nexus] 5개 에이전트 만장일치 시 BUY 결정 STANDARD_OUT
+    23:56:54.766 [Test worker] [] INFO  c.k.t.d.strategy.agent.NexusAgent - [Nexus] 전략 회의 시작 - Samsung (005930), 성향: AGGRESSIVE, 보고서 수: 5
+
+MarketSimulator 통합 테스트 > [Nexus] 5개 에이전트 만장일치 시 BUY 결정 PASSED
+
+MarketSimulator 통합 테스트 > [Kill Switch] 횡령 뉴스 발생 시 즉시 경고 PASSED
+
+23:56:55.488 [SpringApplicationShutdownHook] [] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+23:56:55.488 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists account cascade 
+23:56:55.490 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists holding cascade 
+23:56:55.491 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists journal cascade 
+23:56:55.492 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists rss_feed cascade 
+23:56:55.493 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists rss_feed_config cascade 
+23:56:55.494 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists target_stock cascade 
+23:56:55.494 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists trade_log cascade 
+23:56:55.495 [SpringApplicationShutdownHook] [] DEBUG org.hibernate.SQL - 
+    drop table if exists user_setting cascade 
+23:56:55.498 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+23:56:55.501 [SpringApplicationShutdownHook] [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+
+> Task :jacocoTestReport
+
+BUILD SUCCESSFUL in 33s
+6 actionable tasks: 2 executed, 4 up-to-date

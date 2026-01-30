@@ -42,6 +42,9 @@ public class UserSetting {
     @Builder.Default
     private Double maxPositionRatio = 0.2; // 20%
 
+    @Column(name = "api_rate_limit_config", columnDefinition = "TEXT")
+    private String apiRateLimitConfig;
+
     /**
      * 전략 모드 변경.
      */

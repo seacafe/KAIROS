@@ -54,7 +54,7 @@ class KiwoomClientTest {
                         .withHeader("Content-Type", "application/json")
                         .withBody("""
                                 {
-                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                                     "token_type": "Bearer",
                                     "expires_in": 86400
                                 }
@@ -181,7 +181,11 @@ class KiwoomClientTest {
 
         // when & then
         assertThatThrownBy(() -> kiwoomClient.getStockInfo("005930", "test-token"))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(BusinessException.class)
+                .satisfies(e -> {
+                    var be = (BusinessException) e;
+                    assertThat(be.getErrorCode()).isEqualTo(ErrorCode.KIWOOM_API_ERROR);
+                });
     }
 
     @Test
