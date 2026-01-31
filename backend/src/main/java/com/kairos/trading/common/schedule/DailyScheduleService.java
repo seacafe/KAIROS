@@ -3,15 +3,11 @@ package com.kairos.trading.common.schedule;
 import com.kairos.trading.common.client.KiwoomClient;
 import com.kairos.trading.common.websocket.KiwoomWebSocketClient;
 import com.kairos.trading.domain.execution.service.TradingLoopService;
-import com.kairos.trading.domain.news.service.RssFeedService;
+import com.kairos.trading.domain.news.service.RssMonitoringService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * 일별 스케줄 서비스.
@@ -25,7 +21,7 @@ public class DailyScheduleService {
     private final KiwoomClient kiwoomClient;
     private final KiwoomWebSocketClient webSocketClient;
     private final TradingLoopService tradingLoopService;
-    private final RssFeedService rssFeedService;
+    private final RssMonitoringService rssMonitoringService;
 
     private String currentToken;
     private boolean isMarketOpen = false;
@@ -45,7 +41,7 @@ public class DailyScheduleService {
             log.info("[스케줄] 토큰 발급 완료 (유효시간: {}초)", tokenResponse.expiresIn());
 
             // 2. RSS 캐시 초기화
-            rssFeedService.clearProcessedGuids();
+            rssMonitoringService.cleanupProcessedIds();
 
             // 3. TODO: 에이전트 분석 트리거
             log.info("[스케줄] 장전 분석 시작...");

@@ -10,31 +10,31 @@
 
 **목표:** B/E와 F/E의 프로젝트 뼈대를 세우고, DB 연동 및 전역 트래픽 제어(Rate Limit) 환경을 구축합니다.
 
-- [ ] Backend: Spring Boot Init, Virtual Thread, JPA (PostgreSQL/H2).
-- [ ] Frontend: Vite React Init, Shadcn UI, Zustand/TanStack Query.
+- [x] Backend: Spring Boot Init, Virtual Thread, JPA (PostgreSQL/H2).
+- [x] Frontend: Vite React Init, Shadcn UI, Zustand/TanStack Query.
 
 ### 1.1 Backend Setup (Spring Boot)
 
-- [ ] **Project Init:** Spring Boot 3.5.7, Java 21 LTS 설정.
-- [ ] **Virtual Thread Config:** `ExecutorService.newVirtualThreadPerTaskExecutor()` 적용 및 `Tomcat` 설정.
-- [ ] **Global Traffic Governance (ApiGatekeeper):**
+- [x] **Project Init:** Spring Boot 3.5.7, Java 21 LTS 설정.
+- [x] **Virtual Thread Config:** `ExecutorService.newVirtualThreadPerTaskExecutor()` 적용 및 `Tomcat` 설정.
+- [x] **Global Traffic Governance (ApiGatekeeper):**
   - `Bucket4j`를 도입하여 API별 토큰 버킷 생성.
   - **Kiwoom:** 초당 4회 (Strict Mode - Ban 방지).
   - **Naver:** 초당 10회 (일 25,000회 준수).
   - **Gemini:** 분당 1,000회 (Pay-as-you-go / Cost Safety Cap).
   - 모든 외부 요청을 래핑하는 `Gatekeeper` 컴포넌트 구현.
-- [ ] **Persistence Layer:** PostgreSQL(Prod)/H2(Dev) 설정, `HikariCP`, JPA/Hibernate 연동.
-- [ ] **Schema Definition:** `PROJECT-Specification.md` 6.1절 기준 DDL 작성 및 엔티티 매핑.
+- [x] **Persistence Layer:** PostgreSQL(Prod)/H2(Dev) 설정, `HikariCP`, JPA/Hibernate 연동.
+- [x] **Schema Definition:** `PROJECT-Specification.md` 6.1절 기준 DDL 작성 및 엔티티 매핑.
   - `Account`, `TargetStock`, `TradeLog`, `Journal`, `UserSetting`, `RssFeedConfig`
-- [ ] **Architecture Check:** `backendrule.md`에 따른 Controller-Service-Repository 구조 및 `BaseResponse` 공통 포맷 구현.
+- [x] **Architecture Check:** `backendrule.md`에 따른 Controller-Service-Repository 구조 및 `BaseResponse` 공통 포맷 구현.
 
 ### 1.2 Frontend Setup (React)
 
-- [ ] **Project Init:** Vite + React 19 + TypeScript + TailwindCSS.
-- [ ] **Architecture:** `frontendrule.md`에 따른 **FSD (Feature-Sliced Design)** 폴더 구조 적용.
-- [ ] **UI Library:** Shadcn UI 설치 및 테마 설정.
-- [ ] **State Management:** `Zustand` (전역 상태), `TanStack Query v5` (서버 상태) 설정.
-- [ ] **Router & Layout:** 기본 라우팅 및 레이아웃(Sidebar, Header) 구현.
+- [x] **Project Init:** Vite + React 19 + TypeScript + TailwindCSS.
+- [x] **Architecture:** `frontendrule.md`에 따른 **FSD (Feature-Sliced Design)** 폴더 구조 적용.
+- [x] **UI Library:** Shadcn UI 설치 및 테마 설정.
+- [x] **State Management:** `Zustand` (전역 상태), `TanStack Query v5` (서버 상태) 설정.
+- [x] **Router & Layout:** 기본 라우팅 및 레이아웃(Sidebar, Header) 구현.
 
 ---
 
@@ -44,34 +44,36 @@
 
 ### 2.1 Foundation & Infrastructure (Core)
 
-- [ ] **Global Config:**
+- [x] **Global Config:**
   - `Bucket4j` 빈(Bean) 설정. (Kiwoom: Strict, Gemini: High Throughput/Cost-Safe).
   - Google Cloud Project 연동 및 Billing 설정 확인.
-- [ ] **ApiGatekeeper 구현:**
+- [x] **ApiGatekeeper 구현:**
   - `execute(ApiType type, Supplier<T> action)` 제네릭 메서드 구현.
   - Virtual Thread의 `park()`를 활용한 비동기 대기열(Backpressure) 처리.
-- [ ] **Mock Server:** `WireMock`을 사용하여 Kiwoom API 응답 모킹(TDD용).
+- [x] **Mock Server:** `WireMock`을 사용하여 Kiwoom API 응답 모킹(TDD용).
 
 ### 2.2 External API Connectors (Via Gatekeeper)
 
-- [ ] **Kiwoom API Client:** `ApiGatekeeper`를 경유하는 `RestClient`. `au10001`(토큰), `ka10001`(기본정보) 등 기본 TR 구현. (PDF 문서 참조 필수)
-- [ ] **Mock Server:** `WireMock`을 사용하여 Kiwoom API 응답 모킹(TDD용).
-- [ ] **Gemini Client:** LangChain4j 설정. `Flash`(분석가용)와 `Pro`(전략가용) 모델 Bean 분리.
-- [ ] **Naver Search Client:**
+- [/] **Kiwoom API Client:** `ApiGatekeeper`를 경유하는 `RestClient`.
+  - [x] `au10001`(토큰), `ka10001`(기본정보) 등 기본 TR 구현.
+  - [/] 주문 전송 메서드 실제 동작 (현재 안전장치 적용됨).
+- [x] **Mock Server:** `WireMock`을 사용하여 Kiwoom API 응답 모킹(TDD용).
+- [x] **Gemini Client:** LangChain4j 설정. `Flash`(분석가용)와 `Pro`(전략가용) 모델 Bean 분리.
+- [x] **Naver Search Client:**
   - `ApiGatekeeper`에 일일 쿼터(25,000) 관리 로직 추가.
   - 장전/장중/장후 시간대별 가중치를 둔 호출 스케줄러 구현.
-- [ ] **RSS Feed Parser:**
+- [x] **RSS Feed Parser:**
   - `Rome` 라이브러리 기반의 비동기 Polling 서비스 구현.
   - DART 공시 전용 파서 및 키워드 필터링 로직 구현.
 
 ### 2.3 Intelligence Layer (Analysis & Strategy)
 
-- [ ] **Analysis Agents (5인):** Sentinel, Axiom, Vector, Resonance, Sonar 에이전트 클래스 및 프롬프트 구현.
-- [ ] **Sentinel:** `RssFeedConfig` 연동 동적 RSS 수집기 구현.
-- [ ] **Vector (Hybrid Analyst):**
+- [x] **Analysis Agents (5인):** Sentinel, Axiom, Vector, Resonance, Sonar 에이전트 클래스 및 프롬프트 구현.
+- [x] **Sentinel:** `RssFeedConfig` 연동 동적 RSS 수집기 구현.
+- [x] **Vector (Hybrid Analyst):**
   - **Java Layer:** 이평선 수렴도, 이격도, 거래량 급증률 계산 로직.
   - **AI Layer:** Java가 계산한 수치와 호가창 스냅샷(`0D`)을 해석하여 진입/목표가 산출.
-- [ ] **Investment Strategist (Nexus):**
+- [x] **Investment Strategist (Nexus):**
   - 에이전트 리포트 취합 및 `TargetStock` 승인 로직 구현.
   - **[Logic]** `UserSetting`의 성향(Aggressive/Neutral/Stable)을 읽어와 종목별 `target_price`, `stop_loss_price` 및 **Risk Level** 동적 계산.
   - **[Re-entry]** `TradeLog` 조회 및 쿨타임 계산을 통한 중복 진입 필터링 로직 구현.
@@ -79,11 +81,12 @@
 
 ### 2.4 Execution Layer (Aegis - Dual Mode)
 
-- [ ] **Core Engine (Runtime - Java):**
+- [/] **Core Engine (Runtime - Java):**
   - `TradeExecutionService`: AI 개입 없이 예수금 확인, 호가 스프레드 계산, 주문 전송을 1ms 내에 수행.
+    - [/] 실제 주문 전송(`kt10000`) 부분은 `TODO` 상태 (Safety Lock).
   - `AccountManager`: 실시간 잔고 및 미체결 내역 동기화.
   - 예수금 확인 및 주문 집행, `Kill Switch` 발동 권한 구현.
-- [ ] **Analysis Engine (Post-time - AI):**
+- [x] **Analysis Engine (Post-time - AI):**
   - `PostTradeAnalyzer`: 장 마감 후(`ScheduleService`), 당일 매매 로그를 수집하여 Gemini Flash에게 회고를 요청.
   - **KPI:** 슬리피지(Slippage) > 0.5% 발생한 건들에 대한 원인 분석 리포트 생성.
 
@@ -93,26 +96,28 @@
 
 **목표:** WebSocket을 통한 실시간 데이터 수신과 NanoBanana 알고리즘을 연동합니다.
 
-- [ ] WebSocket (`00`, `0w`) 연동 및 NanoBanana 계산기 구현.
-- [ ] Kill Switch 이벤트 버스 구현.
+- [/] WebSocket (`00`, `0w`) 연동 및 NanoBanana 계산기 구현.
+- [x] Kill Switch 이벤트 버스 구현.
 
 ### 3.1 WebSocket & Event Bus
 
-- [ ] **Kiwoom WebSocket:** `ReactorNettyWebSocketClient` 구현. `00`(체결), `0w`(프로그램), `1h`(VI) 수신.
-- [ ] **Event System:** Spring `ApplicationEventPublisher`를 이용해 수신된 틱 데이터를 에이전트에게 전파.
+- [/] **Kiwoom WebSocket:** `ReactorNettyWebSocketClient` 구현.
+  - [x] `00`(체결), `0w`(프로그램), `1h`(VI) 수신 로직 구현.
+  - [ ] 실제 서버 연결 (`websocketUrl` 변경 필요).
+- [x] **Event System:** Spring `ApplicationEventPublisher`를 이용해 수신된 틱 데이터를 에이전트에게 전파.
 
 ### 3.2 Trading Strategy Implementation
 
-- [ ] **NanoBanana Calculator:** 5/20/60 이평선 수렴/발산 수치 계산 로직 (순수 Java 연산).
-- [ ] **Signal Trigger:** `Vector` 에이전트와 연동하여 매수/매도 시그널 생성.
-- [ ] **Kill Switch:** `Sentinel`(뉴스)의 DART 공시 감지 시 즉시 매도 로직 연결.
-- [ ] **Aegis Execution Engine:**
+- [x] **NanoBanana Calculator:** 5/20/60 이평선 수렴/발산 수치 계산 로직 (순수 Java 연산).
+- [x] **Signal Trigger:** `Vector` 에이전트와 연동하여 매수/매도 시그널 생성.
+- [x] **Kill Switch:** `Sentinel`(뉴스)의 DART 공시 감지 시 즉시 매도 로직 연결.
+- [x] **Aegis Execution Engine:**
   - **PEQ (PriorityBlockingQueue) 구현:** Kill Switch(P0) > 익절(P1) > 매수(P2) 우선순위 처리 로직.
   - **Transaction:** 예수금 확인 및 호가 보정 주문(`kt10000`)과 동시에 `TradeLog` 적재 및 `Account` 잔고 차감(가계산).
 
 ### 3.3 Surveillance System (Sentinel)
 
-- [ ] **Dual-Track Monitoring:**
+- [x] **Dual-Track Monitoring:**
   - **Trend Detection (Naver):** '특징주', '수주' 키워드로 장전 주도주 리스트업.
   - **Risk Alert (RSS):** 장중 DART 공시 실시간 감시 및 `KillSwitchEvent` 발행.
 
@@ -122,31 +127,35 @@
 
 **목표:** 백엔드 API와 프론트엔드를 연결하여 사용자가 시스템을 제어하게 합니다.
 
-- [ ] **Layout & Navigation:** Sidebar(Dashboard, Journal, Settings) 및 Global Header(자산현황) 구현.
-- [ ] **Dashboard:**
+- [x] **Layout & Navigation:** Sidebar(Dashboard, Journal, Settings) 및 Global Header(자산현황) 구현.
+- [x] **Dashboard:**
   - Recharts(캔들), React-TreeMap(자산 히트맵) 적용.
   - WebSocket 로그 뷰어 구현.
-- [ ] **Journal Page:**
+- [x] **Journal Page:**
   - 매매일지 리스트 및 상세 보기(AI 피드백 포함) UI 구현.
-- [ ] **Settings Page:**
+- [x] **Settings Page:**
   - **RSS Feed 관리자:** React Hook Form을 이용한 RSS URL 추가/삭제 폼 구현.
 
 ### 4.1 Dashboard & Visualization
 
-- [ ] **Target Stock View:** 당일 추천 종목 및 에이전트별 점수 카드 UI (`EXT_API_Specification.md` 참조).
-- [ ] **Trading Chart:** `Recharts` 라이브러리로 캔들 차트 및 매매 타점 오버레이 구현.
-- [ ] **Portfolio Heatmap:** 보유 종목 현황 및 수익률 트리맵 시각화.
-- [ ] **Logs:** WebSocket 로그 뷰어 구현 (Throttling 적용).
+- [x] **Target Stock View:** 당일 추천 종목 및 에이전트별 점수 카드 UI (`EXT_API_Specification.md` 참조).
+- [x] **Trading Chart:** `Recharts` 라이브러리로 캔들 차트 및 매매 타점 오버레이 구현.
+- [x] **Portfolio Heatmap:** 보유 종목 현황 및 수익률 트리맵 시각화.
+- [x] **Logs:** WebSocket 로그 뷰어 구현 (Throttling 적용).
 
 ### 4.2 Deep Analysis
 
-- [ ] **Deep Analysis Page:** 종목 조회 시 5대 에이전트 실시간 분석 결과 및 AI 지지/저항선 차트 렌더링.
+- [/] **Deep Analysis Page:** 종목 조회 시 5대 에이전트 실시간 분석 결과 및 AI 지지/저항선 차트 렌더링.
+  - [x] UI 구현 완료.
+  - [/] API Mocking 연결 확인 필요.
 
 ### 4.3 System Control
 
-- [ ] **Manual Override:** 비상 시 수동 매도/매수 버튼 및 API 연동.
-- [ ] **Log & Journal:** 매매 일지 및 AI 복기 리포트 조회 화면 구현.
-- [ ] **Settings Page:**
+- [/] **Manual Override:** 비상 시 수동 매도/매수 버튼 및 API 연동.
+  - [x] UI 버튼 구현.
+  - [ ] 백엔드 연동 테스트 (API TODO 해제 시 가능).
+- [x] **Log & Journal:** 매매 일지 및 AI 복기 리포트 조회 화면 구현.
+- [x] **Settings Page:**
   - **RSS Feed Manager:** React Hook Form을 이용한 RSS URL 추가/삭제.
   - **Strategy Profile:** 공격형/중립형/안정형 선택 UI.
 

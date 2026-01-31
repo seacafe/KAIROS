@@ -53,6 +53,35 @@ management:
     health:
       show-details: when_authorized
 
+# Gemini API 설정 (AI 에이전트용)
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+
+# Kiwoom API 설정
+kiwoom:
+  api:
+    # REST API (주문/조회)
+    base-url: ${KIWOOM_API_URL:https://openapi.koreainvestment.com:9443}
+    app-key: ${KIWOOM_APP_KEY:}
+    app-secret: ${KIWOOM_APP_SECRET:}
+    account-no: ${KIWOOM_ACCOUNT_NO:}
+    is-virtual: true  # 모의투자 여부
+  websocket:
+    # WebSocket (실시간 시세)
+    url: ${KIWOOM_WS_URL:wss://openapi.koreainvestment.com:21000}
+
+# Naver API 설정
+naver:
+  api:
+    client-id: ${NAVER_CLIENT_ID:}
+    client-secret: ${NAVER_CLIENT_SECRET:}
+
+# KAIROS 트레이딩 설정
+kairos:
+  trading:
+    dry-run: true  # true: 실제 주문 전송 안함 (기본값 - 안전모드)
+
 # 로깅 설정
 logging:
   level:

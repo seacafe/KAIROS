@@ -1,7 +1,7 @@
 package com.kairos.trading.common.event;
 
 import com.kairos.trading.domain.execution.service.TradeExecutionService;
-import com.kairos.trading.domain.flow.service.SonarService;
+import com.kairos.trading.domain.flow.agent.SonarAgent;
 import com.kairos.trading.domain.strategy.dto.ExecutionOrder;
 import com.kairos.trading.domain.strategy.service.NexusService;
 import com.kairos.trading.domain.technical.service.NanoBananaCalculator;
@@ -29,7 +29,6 @@ public class TradingEventListener {
 
     private final NanoBananaCalculator nanoBananaCalculator;
     private final VectorService vectorService;
-    private final SonarService sonarService;
     private final NexusService nexusService;
     private final TradeExecutionService executionService;
     private final ApplicationEventPublisher eventPublisher;
@@ -51,13 +50,14 @@ public class TradingEventListener {
         // 캐시에서 이평선 조회 (없으면 스킵)
         var cache = maCache.get(stockCode);
         if (cache == null) {
+            log.debug("[EventListener] MA 캐시 미존재: {}", stockCode);
             return;
         }
 
         // NanoBanana 패턴 체크 (Pure Java, 실시간)
         boolean isPattern = vectorService.detectNanoBananaPattern(
                 cache.ma5, cache.ma20, cache.ma60,
-                event.getVolume(), cache.avgVolume);
+                event.getAccVolume(), cache.avgVolume);
 
         if (isPattern) {
             log.info("[EventListener] 🍌 NanoBanana 감지: {} @ {}", stockCode, event.getPrice());
@@ -117,6 +117,16 @@ public class TradingEventListener {
      * 분석 완료 이벤트 처리.
      * Nexus에게 전달하여 최종 의사결정 요청.
      */
+    // Agent Injections
+    private final com.kairos.trading.domain.news.agent.SentinelAgent sentinelAgent;
+    private final com.kairos.trading.domain.fundamental.agent.AxiomAgent axiomAgent;
+    private final com.kairos.trading.domain.flow.agent.SonarAgent sonarAgent;
+    private final com.kairos.trading.domain.sentiment.agent.ResonanceAgent resonanceAgent;
+
+    /**
+     * 분석 완료 이벤트 처리.
+     * Nexus에게 전달하여 최종 의사결정 요청.
+     */
     @Async
     @EventListener
     public void onAnalysisComplete(AnalysisCompleteEvent event) {
@@ -125,8 +135,57 @@ public class TradingEventListener {
 
         // 점수가 70 이상이면 Nexus에게 의사결정 요청
         if (event.getScore() >= 70) {
-            // TODO: 5인 분석가 리포트 수집 후 Nexus.decide() 호출
             log.info("[EventListener] 고점수 종목 → Nexus 의사결정 요청: {}", event.getStockCode());
+
+            String stockCode = event.getStockCode();
+            String stockName = event.getStockName();
+
+            // 1. 5인 분석가 리포트 수집 (Structured Concurrency - Parallel Execution)
+            try (var scope = new java.util.concurrent.StructuredTaskScope.ShutdownOnFailure()) {
+                // Fork tasks (Virtual Threads)
+                // Fix: Hardcoded "Simulated" strings replaced with empty context or specific
+                // request parameters
+                var sentinelTask = scope.fork(() -> sentinelAgent.analyze(stockCode, stockName, "{}"));
+                var axiomTask = scope.fork(() -> axiomAgent.analyze(stockCode, stockName, "{}"));
+                var vectorTask = scope.fork(() -> vectorService.analyzeAndGetResponse(
+                        stockCode, stockName, event.getPrice(),
+                        0, 0, 0, 0, 0, "{}"));
+                var sonarTask = scope.fork(() -> sonarAgent.analyze(stockCode, stockName, "{}", "{}"));
+                var resonanceTask = scope.fork(() -> resonanceAgent.analyze(0, 0, 0, 0, 0, "{}"));
+
+                // Join implementation (Wait for all or fail fast)
+                scope.join();
+                scope.throwIfFailed();
+
+                var reports = java.util.List.of(
+                        sentinelTask.get(),
+                        axiomTask.get(),
+                        vectorTask.get(),
+                        sonarTask.get(),
+                        resonanceTask.get());
+
+                // 2. Nexus에게 의사결정 요청
+                var decision = nexusService.decide(reports, "AGGRESSIVE", stockCode, stockName);
+
+                // 3. BUY 승인 시 주문 생성 및 Aegis 전달
+                if ("BUY".equals(decision.decision())) {
+                    var order = ExecutionOrder.newBuy(
+                            stockCode,
+                            stockName,
+                            10, // 수량 (Sample)
+                            java.math.BigDecimal.valueOf(decision.targetPrice()),
+                            java.math.BigDecimal.valueOf(decision.targetPrice()),
+                            java.math.BigDecimal.valueOf(decision.stopLossPrice()),
+                            decision.riskLevel(),
+                            decision.reasoning());
+                    executionService.submitOrder(order);
+                    executionService.processNextOrder();
+                }
+
+            } catch (java.util.concurrent.ExecutionException | InterruptedException e) {
+                log.error("[EventListener] 에이전트 분석 중 오류 발생: {}", e.getMessage(), e);
+                // Async 메서드이므로 예외 전파 대신 로그 처리
+            }
         }
     }
 

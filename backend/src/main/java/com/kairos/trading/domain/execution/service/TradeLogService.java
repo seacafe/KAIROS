@@ -40,4 +40,27 @@ public class TradeLogService {
         var logs = tradeLogRepository.findHighSlippageTrades(startOfDay);
         return executionMapper.toTradeLogDtoList(logs);
     }
+
+    /**
+     * 주문 결과 저장.
+     */
+    @Transactional
+    public void saveOrderResult(com.kairos.trading.domain.strategy.dto.ExecutionOrder order,
+            com.kairos.trading.common.client.OrderResult result) {
+        log.info("[TradeLog] 주문 결과 저장: {} {} {}주 (주문번호: {})",
+                order.action(), order.stockCode(), order.quantity(), result.orderId());
+
+        var tradeLog = com.kairos.trading.domain.execution.entity.TradeLog.builder()
+                .stockCode(order.stockCode())
+                .stockName(order.stockName())
+                .tradeType(order.action())
+                .quantity(order.quantity())
+                .orderPrice(order.entryPrice())
+                .orderId(result.orderId())
+                .executedAt(LocalDateTime.now())
+                .status("SUBMITTED")
+                .build();
+
+        tradeLogRepository.save(tradeLog);
+    }
 }

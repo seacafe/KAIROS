@@ -83,7 +83,7 @@ public class AegisReviewService {
         StringBuilder sb = new StringBuilder();
         for (var log : logs) {
             sb.append(String.format(
-                    "ID: %d, 종목: %s, 주문가: %d, 체결가: %d, 슬리피지: %.2f%%\n",
+                    "ID: %d, 종목: %s, 주문가: %s, 체결가: %s, 슬리피지: %.2f%%\n",
                     log.getId(),
                     log.getStockName(),
                     log.getOrderPrice(),

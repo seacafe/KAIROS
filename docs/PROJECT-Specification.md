@@ -63,12 +63,12 @@
 * **Runtime:** Java 21 (LTS) - `ExecutorService.newVirtualThreadPerTaskExecutor()` 필수 적용.
 * **Framework:** Spring Boot 3.5.7 (Latest Stable).
 * **Concurrency:** Structured Concurrency (구조적 동시성) 적용.
-* **AI Engine:** **LangChain4j** + Google Gemini API (`gemini-2.5-flash` Series).
+* **AI Engine:** **LangChain4j** + Google Gemini API (`gemini-3.0` Series, mainly `gemini-3.0-pro-preview`).
 * **Networking:**
   * **REST (Default):** `RestClient` (Sync Interface on Virtual Threads - 기본 사용).
   * **REST (Async):** `WebClient` (Non-blocking I/O, Streaming, 고성능 비동기 처리가 필요한 경우 제한적 사용).
   * **WebSocket:** `ReactorNettyWebSocketClient` (키움 실시간 시세 수신용).
-  * **RSS Parser:** `Rome` Tools (DB 기반 동적 URL 관리, 1분 주기 Polling).
+* **RSS Parser:** `Rome` Tools (DB 기반 동적 URL 관리, 1분 주기 Polling).
 * **Data Persistence (Standard JDBC):**
   * **DB:** **JDBC** + H2 (Dev) / PostgreSQL (Prod).
   * **Connection Pool:** **HikariCP** (Virtual Thread 환경에서도 안정적 성능 보장).
@@ -251,7 +251,7 @@ AI의 추론 지연 시간(Latency)을 극복하고 초단기 변동성에 대�
 
 ## 6. External API Integration Summary
 
-*(개발 시 `EXT_API_Specification.md` 및 `키움 REST API 문서.pdf` 참조)*
+*(개발 시 `EXT_API_Specification.md` 및 `키움 REST API 문서.md` 참조)*
 
 * **RSS:** `Rome` 라이브러리 사용.
 * **Naver:** Search API (`X-Naver-Client-Id`).
@@ -447,47 +447,47 @@ CREATE TABLE rss_feed_config (
 
 **Phase 1: Foundation (인프라 및 스키마 구축)**
 
-* [ ] **Backend Core:** Java 21 `VirtualThreadExecutor` 및 `RestClient` 설정.
-* [ ] **Persistence:** H2(Dev)/PostgreSQL(Prod) + `HikariCP` + JPA 설정.
+* [x] **Backend Core:** Java 21 `VirtualThreadExecutor` 및 `RestClient` 설정.
+* [x] **Persistence:** H2(Dev)/PostgreSQL(Prod) + `HikariCP` + JPA 설정.
   * **Schema:** `Account`, `TargetStock`, `TradeLog`, `Journal` 및 **`UserSetting`, `RssFeedConfig`** 엔티티 매핑.
-* [ ] **Kiwoom Connectivity:**
+* [x] **Kiwoom Connectivity:**
   * `WireMock` 기반 API Mock Server 구축 (TDD 환경).
   * `KiwoomClient` 구현: `au10001`(Auth) 및 공통 헤더(`cont-yn`) 처리.
-* [ ] **Frontend Setup:** React 19 + Vite + **FSD 아키텍처 폴더링** + Shadcn UI 설치.
+* [x] **Frontend Setup:** React 19 + Vite + **FSD 아키텍처 폴더링** + Shadcn UI 설치.
 
 **Phase 2: The 7-Agents & Strategy (두뇌 및 판단 로직)**
 
-* [ ] **AI Core:** LangChain4j + Gemini API (`gemini-2.5-flash`) 연동.
-* [ ] **Sentinel (News):**
+* [x] **AI Core:** LangChain4j + Gemini API (`gemini-2.5-flash`) 연동.
+* [x] **Sentinel (News):**
   * **Active:** Naver Search API 연동 (장전 주도주 발굴).
   * **Passive:** `rss_feed_config` 테이블 연동 동적 RSS 수집기.
-* [ ] **Sonar (Flow):** `ka10008`(외인), `ka10040`(거래원) 분석 로직 구현.
-* [ ] **Nexus (Brain):**
+* [x] **Sonar (Flow):** `ka10008`(외인), `ka10040`(거래원) 분석 로직 구현.
+* [x] **Nexus (Brain):**
   * `UserSetting`의 성향(Aggressive/Neutral/Stable)을 반영한 **매수 승인 및 목표가/손절가 동적 계산** 로직.
   * **Re-entry:** `TradeLog` 조회 기반 재진입 쿨타임 체크 로직.
-* [ ] **API:** 프론트엔드용 `Settings` (전략 변경, RSS 관리) CRUD API 구현.
+* [x] **API:** 프론트엔드용 `Settings` (전략 변경, RSS 관리) CRUD API 구현.
 
 **Phase 3: Real-time Surveillance & Gatekeeping (감시 체계)**
 
-* [ ] **Resonance (Gatekeeper):** Global Index 및 시장 점수 산출 로직. (점수 미달 시 진입 차단).
-* [ ] **Surveillance Engine:** `Rome` 라이브러리 기반 DART 공시 1분 주기 폴링.
-* [ ] **Kill Switch:** '횡령/배임' 키워드 감지 시 `ApplicationEventPublisher`로 긴급 매도 이벤트 발행.
+* [x] **Resonance (Gatekeeper):** Global Index 및 시장 점수 산출 로직. (점수 미달 시 진입 차단).
+* [x] **Surveillance Engine:** `Rome` 라이브러리 기반 DART 공시 1분 주기 폴링.
+* [x] **Kill Switch:** '횡령/배임' 키워드 감지 시 `ApplicationEventPublisher`로 긴급 매도 이벤트 발행.
 
 **Phase 4: Trading Engine (실시간 매매 심장)**
 
-* [ ] **WebSocket:** `ReactorNetty` 기반 `00`(체결), `0w`(프로그램), `0A`(호가) 수신 및 라우팅.
-* [ ] **Vector (Eye):** **NanoBananaCalculator** 구현 (이평선 수렴/발산 실시간 계산).
-* [ ] **Aegis (Wallet):**
+* [x] **WebSocket:** `ReactorNetty` 기반 `00`(체결), `0w`(프로그램), `0A`(호가) 수신 및 라우팅.
+* [x] **Vector (Eye):** **NanoBananaCalculator** 구현 (이평선 수렴/발산 실시간 계산).
+* [x] **Aegis (Wallet):**
   * **PEQ (Priority Execution Queue):** KillSwitch(P0) > 익절(P1) > 매수(P2) 우선순위 처리.
   * `0C` 호가 기반 슬리피지 제어 및 `kt10000`(주문)/`kt10003`(취소) 집행.
-* [ ] **Position Management:** 실시간 등락률 감시 및 **ATR 트레일링 스탑** 로직 적용.
+* [x] **Position Management:** 실시간 등락률 감시 및 **ATR 트레일링 스탑** 로직 적용.
 
 **Phase 5: Frontend Integration & Verification (통합 및 검증)**
 
-* [ ] **Dashboard:**
+* [x] **Dashboard:**
   * `Recharts`: 캔들 차트 + 매매 타점 오버레이.
   * `React-TreeMap`: 포트폴리오 히트맵 시각화.
   * WebSocket 로그 뷰어 연동.
-* [ ] **Deep Analysis Page:** 종목 조회 시 AI 실시간 분석(지지/저항선) 결과 렌더링.
-* [ ] **Settings/Journal:** 전략 설정 변경 및 매매일지/AI 복기 뷰어 구현.
-* [ ] **Final Test:** 모의투자 환경 연결 및 장중 시나리오(급등/급락) 통합 테스트.
+* [x] **Deep Analysis Page:** 종목 조회 시 AI 실시간 분석(지지/저항선) 결과 렌더링.
+* [x] **Settings/Journal:** 전략 설정 변경 및 매매일지/AI 복기 뷰어 구현.
+* [x] **Final Test:** 모의투자 환경 연결 및 장중 시나리오(급등/급락) 통합 테스트.

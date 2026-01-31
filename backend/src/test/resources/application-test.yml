@@ -22,6 +22,8 @@ kiwoom:
     base-url: http://localhost:18080
     app-key: test-app-key
     app-secret: test-app-secret
+    account-no: 00000000-00
+    is-virtual: true
 
 # Gemini API (Mock)
 gemini:

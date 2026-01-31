@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     java
-    id("org.springframework.boot") version "3.4.1"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
 }
@@ -70,8 +70,14 @@ dependencies {
 
 // Virtual Threads 설정은 application.yml에서 처리
 
+// 컴파일 시 Preview 기능 활성화 (Structured Concurrency)
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("--enable-preview")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("--enable-preview") // 테스트 실행 시 JVM 옵션 추가
     testLogging {
         events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         exceptionFormat = TestExceptionFormat.FULL

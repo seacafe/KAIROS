@@ -27,6 +27,7 @@ public enum ErrorCode {
     KIWOOM_API_ERROR("3000", "키움 API 호출에 실패했습니다."),
     KIWOOM_RATE_LIMIT_EXCEEDED("3001", "키움 API 호출 제한을 초과했습니다."),
     KIWOOM_TOKEN_EXPIRED("3002", "키움 API 토큰이 만료되었습니다."),
+    KIWOOM_ORDER_FAILED("3003", "키움 주문 처리에 실패했습니다."),
     NAVER_API_ERROR("3100", "네이버 API 호출에 실패했습니다."),
     NAVER_QUOTA_EXCEEDED("3101", "네이버 API 일일 할당량을 초과했습니다."),
     GEMINI_API_ERROR("3200", "Gemini API 호출에 실패했습니다."),

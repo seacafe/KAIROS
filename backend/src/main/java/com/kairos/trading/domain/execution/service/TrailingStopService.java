@@ -55,6 +55,9 @@ public class TrailingStopService {
      * @return 새로운 손절가
      */
     public long calculateAtrTrailingStop(double atr, long currentPrice, double multiplier) {
+        if (atr <= 0) {
+            throw new IllegalArgumentException("ATR must be positive");
+        }
         long atrStop = currentPrice - (long) (atr * multiplier);
         log.debug("[TrailingStop] ATR 기반: 현재가 {} - (ATR {} × {}) = {}",
                 currentPrice, atr, multiplier, atrStop);
