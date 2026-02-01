@@ -8,13 +8,14 @@ export const queryKeys = {
         all: ['accounts'] as const,
         detail: (id: string) => ['accounts', id] as const,
         balance: () => ['accounts', 'balance'] as const,
+        summary: () => ['accounts', 'summary'] as const,
     },
 
     // 종목 관련
     stocks: {
         all: ['stocks'] as const,
         detail: (code: string) => ['stocks', code] as const,
-        targets: (date?: string) => ['stocks', 'targets', date] as const,
+        list: (date?: string) => ['stocks', 'list', date] as const,
         analysis: (code: string) => ['stocks', 'analysis', code] as const,
     },
 

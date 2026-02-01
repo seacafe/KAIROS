@@ -3,8 +3,8 @@
 ## 1. Overview
 
 본 문서는 KAIROS 시스템이 외부 서비스(Kiwoom, Naver, RSS, Gemini)와 통신하기 위한 상세 프로토콜 및 데이터 규격을 정의합니다.
-"주의: 본 문서에 정의되지 않은 필드는 반드시 동봉된 Kiwoom REST API 문서.md의 해당 TR 섹션을 기준으로 구현한다. Naver API는 공식 개발자 센터 문서를 참조한다."
-**모든 필드는 키움증권 Open API 명세서(markdown)를 기준으로 기술되었습니다. 만약 존재하지 않는 필드가 있다면 `키움 REST API 문서`를 확인합니다.**
+"주의: 본 문서에 정의되지 않은 필드는 반드시 동봉된 `키움 API 명세`폴더 하위의 명세서(jpg 파일들)를 확인하여 구현한다. Naver API는 공식 개발자 센터 문서를 참조한다."
+**모든 필드는 키움증권 Open API 명세서를 기준으로 기술되었습니다. 만약 존재하지 않는 필드가 있다면 `키움 API 명세`폴더를 확인합니다.**
 
 ---
 
@@ -213,6 +213,32 @@
   * `dstr_stk`: 유통주식
   * `dstr_rt`: 유통비율
 
+#### [ka10005] 주식 일주월시분 요청
+
+* **Target Agent:** **Vector (Technical Agent)**
+* **Description:** 특정 종목의 일/주/월/시/분 단위 시세 데이터를 기간별로 조회하여 이동평균선 계산 등 기술적 분석에 활용합니다.
+* **Endpoint:** `/api/dostk/stkinfo`
+* **Method:** `POST`
+* **Request Body:**
+  * `stk_cd` (String, Required): 종목코드
+  * `qry_tp` (String, Required): "D"(일), "W"(주), "M"(월), "m"(분), "T"(틱)
+* **Response Body:**
+  * `stk_cd`: 종목코드 (stk_cd)
+  * `stk_nm`: 종목명 (stk_nm)
+  * `cur_prc`: 현재가 (cur_prc)
+  * `flu_prc`: 전일대비 (flu_prc)
+  * `flu_rt`: 등락률 (flu_rt)
+  * `acc_trde_qty`: 누적거래량 (acc_trde_qty)
+  * `stk_dt_pole`: (List) 시계열 데이터
+    * `dt`: 일자 (YYYYMMDDHHMMSS)
+    * `open_prc`: 시가
+    * `hgh_prc`: 고가
+    * `low_prc`: 저가
+    * `clos_prc`: 종가
+    * `trde_qty`: 거래량
+    * `trde_amt`: 거래대금
+    * `adj_clos_prc`: 수정종가
+
 #### [ka10081] 주식 일봉 차트 조회
 
 * **Target Agent:** **Vector (Technical Agent)**
@@ -295,6 +321,34 @@
   * `orgn_daly_nettrde`: 기관일별순매매
   * `frgnr_daly_nettrde`: 외국인일별순매매
   * `frgnr_qota_rt`: 외국인지분율
+
+#### [ka20001] 업종 현재가 요청
+
+* **Target Agent:** **Sonar (TradingFlow Agent)**
+* **Description:** 코스피(001), 코스닥(101) 등 업종 지수를 조회하여 시장의 전반적인 방향성(Market Regime)을 판단합니다.
+* **Endpoint:** `/api/dostk/stkinfo`
+* **Method:** `POST`
+* **Request Body:**
+  * `upjong_cd` (String, Required): 업종코드 (예: "001":종합, "101":코스닥)
+* **Response Body:**
+  * `upjong_cd`: 업종코드
+  * `upjong_nm`: 업종명
+  * `cur_prc`: 현재지수
+  * `pred_jisu`: 전일지수
+  * `flu_jisu`: 전일대비
+  * `flu_rt`: 등락률
+  * `acc_trde_qty`: 누적거래량
+  * `acc_trde_amt`: 누적거래대금
+  * `open_jisu`: 시가지수
+  * `hgh_jisu`: 고가지수
+  * `low_jisu`: 저가지수
+  * `upjong_stk_prst`: (List) 업종구성종목(상위)
+    * `stk_cd`: 종목코드
+    * `stk_nm`: 종목명
+    * `cur_prc`: 현재가
+    * `pred_pre`: 전일대비
+    * `flu_rt`: 등락률
+    * `trde_qty`: 거래량
 
 #### [ka90003] 프로그램 순매수 상위 50 요청
 
@@ -416,6 +470,25 @@
   * `ord_no`: 주문번호
   * `dmst_stex_tp`: 국내거래소구분
 
+#### [kt10002] 주식 정정 주문
+
+* **Target Agent:** **Aegis (Portfolio Manager)**
+* **Description:** 미체결된 주문의 가격 또는 수량을 정정합니다.
+* **Endpoint:** `/api/dostk/ordr`
+* **Method:** `POST`
+* **Request Body:**
+  * `dmst_stex_tp` (String): "KRX"
+  * `stk_cd` (String): 종목코드
+  * `orig_ord_no` (String): 원주문번호 (필수)
+  * `ord_qty` (String): 정정수량
+  * `ord_uv` (String): 정정단가
+  * `trde_tp` (String): 거래구분 ("00":지정가, "03":시장가)
+* **Response Body:**
+  * `ord_no`: 정정주문번호
+  * `base_orig_ord_no`: 모주문번호
+  * `return_code`: 결과코드 (0: 성공)
+  * `return_msg`: 결과메시지
+
 #### [kt10003] 주식 취소 주문
 
 * **Target Agent:** **Aegis (Portfolio Manager)**
@@ -477,6 +550,37 @@
     * `pred_sellq`: 전일매도수량
     * `tdy_buyq`: 금일매수수량
     * `tdy_sellq`: 금일매도수량
+
+#### [kt00007] 계좌별 주문 체결 내역 상세
+
+* **Target Agent:** **Aegis (Portfolio Manager)**
+* **Description:** 특정 계좌의 기간별 주문 및 체결 내역을 상세 조회하여 매매 복기 및 성과 분석에 활용합니다.
+* **Endpoint:** `/api/dostk/accinfo`
+* **Method:** `POST`
+* **Request Body:**
+  * `acnt_no` (String, Required): 계좌번호
+  * `qry_dt_start` (String, Required): 시작일 (YYYYMMDD)
+  * `qry_dt_end` (String, Required): 종료일 (YYYYMMDD)
+  * `sll_buy_tp` (String, Optional): 매매구분 (1:매도, 2:매수, 0:전체)
+  * `che_yn` (String, Optional): 체결여부 (0:전체, 1:체결, 2:미체결)
+* **Response Body:**
+  * `tot_buy_cntr_amt`: 총매수체결금액
+  * `tot_sell_cntr_amt`: 총매도체결금액
+  * `ord_cntr_dtl`: (List) 주문체결내역
+    * `ord_dt`: 주문일자
+    * `ord_no`: 주문번호
+    * `org_ord_no`: 원주문번호
+    * `stk_cd`: 종목코드
+    * `stk_nm`: 종목명
+    * `sll_buy_tp`: 매매구분
+    * `ord_qty`: 주문수량
+    * `ord_uv`: 주문단가
+    * `cntr_qty`: 체결수량
+    * `cntr_uv`: 체결단가
+    * `uncl_qty`: 미체결수량
+    * `trde_tp`: 주문구분
+    * `ord_stat`: 주문상태
+    * `cntr_no`: 체결번호
 
 #### [kt00005] 체결 잔고
 
@@ -649,6 +753,31 @@
   * `311`: 시가총액(억)
   * `567`: 상한가발생시간
   * `568`: 하한가발생시간
+
+##### [0B] 주식체결 (Stock Trade)
+
+* **Target Agent:** **Vector (Technical Agent)**
+* **Description:** 실시간 주식 체결 정보를 수신하여 틱 단위 분석 및 단기 추세를 파악합니다.
+* **Values:**
+  * `20`: 체결시간 (HHMMSS)
+  * `10`: 현재가
+  * `11`: 전일대비
+  * `12`: 등락율
+  * `27`: (최우선)매도호가
+  * `28`: (최우선)매수호가
+  * `15`: 거래량 (체결량)
+  * `13`: 누적거래량
+  * `14`: 누적거래대금
+  * `16`: 시가
+  * `17`: 고가
+  * `18`: 저가
+  * `25`: 전일대비기호
+  * `26`: 전일거래량대비
+  * `29`: 거래대금증감
+  * `30`: 전일거래량대비(비율)
+  * `31`: 거래회전율
+  * `32`: 거래비용
+  * `311`: 시가총액(억)
 
 ##### [0C] 주식우선호가 (Best Order Book Quote)
 

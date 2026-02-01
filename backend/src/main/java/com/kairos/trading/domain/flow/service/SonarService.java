@@ -1,6 +1,8 @@
 package com.kairos.trading.domain.flow.service;
 
 import com.kairos.trading.common.ai.AgentResponse;
+import com.kairos.trading.common.client.KiwoomClient;
+import com.kairos.trading.domain.flow.dto.SectorIndexResponse;
 import com.kairos.trading.domain.flow.dto.FlowAnalysisDto;
 import com.kairos.trading.domain.flow.agent.SonarAiClient;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class SonarService {
 
     private final SonarAiClient sonarAiClient;
+    private final KiwoomClient kiwoomClient;
 
     /**
      * 수급 데이터를 AI로 분석한다.
@@ -96,5 +99,16 @@ public class SonarService {
                         "foreignNet", foreignNet,
                         "institutionNet", institutionNet,
                         "isDistribution", result.isDistribution()));
+    }
+
+    /**
+     * 업종 지수(코스피/코스닥 등)를 조회한다 (ka20001).
+     *
+     * @param sectorCode 업종코드 (001: 종합, 101: 코스닥 등)
+     */
+    public SectorIndexResponse fetchSectorIndex(String sectorCode) {
+        // TODO: Sonar 에이전트 전용 토큰 관리 필요
+        String dummyToken = "sonar-agent-token";
+        return kiwoomClient.getSectorIndex(dummyToken, sectorCode);
     }
 }

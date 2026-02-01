@@ -12,14 +12,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 추천 종목 API.
+ * AI 추천 종목 API.
  * 
  * 역할: 요청 검증 및 응답 변환만 담당.
  * 비즈니스 로직은 NexusService에서 처리.
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/targets")
+@RequestMapping("/api/stocks")
 @RequiredArgsConstructor
 public class TargetStockController {
 

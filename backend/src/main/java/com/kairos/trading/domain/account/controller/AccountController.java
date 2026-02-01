@@ -2,6 +2,7 @@ package com.kairos.trading.domain.account.controller;
 
 import com.kairos.trading.common.response.BaseResponse;
 import com.kairos.trading.domain.account.dto.AccountBalanceDto;
+import com.kairos.trading.domain.account.dto.AccountSummaryDto;
 import com.kairos.trading.domain.account.dto.HoldingDto;
 import com.kairos.trading.domain.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +43,15 @@ public class AccountController {
     public BaseResponse<List<HoldingDto>> getHoldings() {
         log.debug("[API] 보유 종목 조회");
         return BaseResponse.success(accountService.getHoldings());
+    }
+
+    /**
+     * 계좌 요약 정보 조회.
+     * 잔고 + 보유종목 + 수익률 통합 데이터.
+     */
+    @GetMapping("/summary")
+    public BaseResponse<AccountSummaryDto> getSummary() {
+        log.debug("[API] 계좌 요약 조회");
+        return BaseResponse.success(accountService.getSummary());
     }
 }

@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
+import { AlertToast, useWebSocketConnection } from '@/features/alerts/AlertToast'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -17,13 +18,24 @@ interface AppProviderProps {
 }
 
 /**
+ * WebSocket 연결 래퍼.
+ */
+function WebSocketProvider({ children }: { children: ReactNode }) {
+    useWebSocketConnection();
+    return <>{children}</>;
+}
+
+/**
  * 전역 프로바이더.
  * frontendrule.md §1.1 준수 - app/providers/ 분리
  */
 export function AppProvider({ children }: AppProviderProps) {
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <WebSocketProvider>
+                {children}
+                <AlertToast />
+            </WebSocketProvider>
         </QueryClientProvider>
     )
 }

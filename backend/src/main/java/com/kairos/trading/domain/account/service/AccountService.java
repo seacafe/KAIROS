@@ -1,6 +1,7 @@
 package com.kairos.trading.domain.account.service;
 
 import com.kairos.trading.domain.account.dto.AccountBalanceDto;
+import com.kairos.trading.domain.account.dto.AccountSummaryDto;
 import com.kairos.trading.domain.account.dto.HoldingDto;
 import com.kairos.trading.domain.account.entity.Account;
 import com.kairos.trading.domain.account.entity.Holding;
@@ -62,6 +63,15 @@ public class AccountService {
     public List<HoldingDto> getHoldings(Long accountId) {
         List<Holding> holdings = holdingRepository.findByAccountId(accountId);
         return accountMapper.toHoldingDtoList(holdings);
+    }
+
+    /**
+     * 계좌 요약 정보 조회.
+     */
+    public AccountSummaryDto getSummary() {
+        AccountBalanceDto balance = getBalance();
+        List<HoldingDto> holdings = getHoldings();
+        return AccountSummaryDto.of(balance, holdings);
     }
 
     private AccountBalanceDto getDefaultBalance() {

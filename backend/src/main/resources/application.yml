@@ -1,40 +1,34 @@
+# ===========================================
+# KAIROS Backend - 기본 설정 (공통)
+# ===========================================
+# 프로필별 설정은 application-{profile}.yml 참조
+#   - dev: 개발환경 (H2, 모의투자)
+#   - prod: 운영환경 (PostgreSQL, 실전투자)
+#
+# 실행 방법:
+#   ./gradlew bootRun --args='--spring.profiles.active=dev'
+#   ./gradlew bootRun --args='--spring.profiles.active=prod'
+
 spring:
   application:
     name: kairos-trading
+
+  # 기본 프로필: dev
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   # Virtual Threads 활성화 (Java 21)
   threads:
     virtual:
       enabled: true
 
-  # JPA 설정
+  # JPA 기본 설정
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
-    open-in-view: false
-
-  # H2 Console (개발용)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  # 기본 데이터소스 (H2 - 개발 환경)
-  datasource:
-    url: jdbc:h2:mem:kairos;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      idle-timeout: 30000
-      connection-timeout: 20000
 
 # 서버 설정
 server:
@@ -53,71 +47,12 @@ management:
     health:
       show-details: when_authorized
 
-# Gemini API 설정 (AI 에이전트용)
-gemini:
-  api:
-    key: ${GEMINI_API_KEY:}
-
-# Kiwoom API 설정
-kiwoom:
-  api:
-    # REST API (주문/조회)
-    base-url: ${KIWOOM_API_URL:https://openapi.koreainvestment.com:9443}
-    app-key: ${KIWOOM_APP_KEY:}
-    app-secret: ${KIWOOM_APP_SECRET:}
-    account-no: ${KIWOOM_ACCOUNT_NO:}
-    is-virtual: true  # 모의투자 여부
-  websocket:
-    # WebSocket (실시간 시세)
-    url: ${KIWOOM_WS_URL:wss://openapi.koreainvestment.com:21000}
-
-# Naver API 설정
-naver:
-  api:
-    client-id: ${NAVER_CLIENT_ID:}
-    client-secret: ${NAVER_CLIENT_SECRET:}
-
-# KAIROS 트레이딩 설정
-kairos:
-  trading:
-    dry-run: true  # true: 실제 주문 전송 안함 (기본값 - 안전모드)
-
-# 로깅 설정
+# 기본 로깅
 logging:
-  level:
-    root: INFO
-    com.kairos.trading: DEBUG
-    org.hibernate.SQL: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
----
-# Production 프로파일
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/kairos
-    driver-class-name: org.postgresql.Driver
-    username: ${DB_USERNAME:kairos}
-    password: ${DB_PASSWORD:kairos}
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 10
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-
-  h2:
-    console:
-      enabled: false
-
-logging:
-  level:
-    root: WARN
-    com.kairos.trading: INFO
-    org.hibernate.SQL: WARN
+# ===========================================
+# ⚠️ 외부 API 설정 (Gemini, Kiwoom, Naver)은
+#    application-dev.yml 또는 application-prod.yml에서 관리
+# ===========================================

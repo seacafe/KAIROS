@@ -10,6 +10,8 @@ import com.kairos.trading.common.event.ProgramTradeEvent;
 import reactor.util.retry.Retry;
 import com.kairos.trading.common.event.TickDataEvent;
 import com.kairos.trading.common.event.ViEvent;
+import com.kairos.trading.common.event.StockQuoteEvent;
+import com.kairos.trading.common.event.StockTradeEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -206,6 +208,8 @@ public class KiwoomWebSocketClient {
             switch (trCode) {
                 case "00" -> handleTickData(node);
                 case "04" -> handleBalance(node);
+                case "0A" -> handleStockQuote(node);
+                case "0B" -> handleStockTrade(node);
                 case "0D" -> handleOrderBook(node);
                 case "0w" -> handleProgramTrade(node);
                 case "1h" -> handleViEvent(node);
@@ -263,6 +267,57 @@ public class KiwoomWebSocketClient {
 
         eventPublisher.publishEvent(event);
         log.warn("🚨 VI 발동: {} ({}) @ {}", event.getStockName(), event.getViType(), event.getTriggerPrice());
+    }
+
+    /**
+     * 주식기세 처리 (0A).
+     * Vector 에이전트가 시가/고가/저가 분석에 활용.
+     */
+    private void handleStockQuote(JsonNode node) {
+        var event = new StockQuoteEvent(
+                this,
+                node.path("stk_cd").asText(),
+                node.path("stk_nm").asText(),
+                node.path("open_prc").asLong(),
+                node.path("hgh_prc").asLong(),
+                node.path("low_prc").asLong(),
+                node.path("cur_prc").asLong(),
+                node.path("base_prc").asLong(),
+                node.path("flu_rt").asDouble());
+
+        eventPublisher.publishEvent(event);
+
+        if (event.isGapUp()) {
+            log.info("📈 갭 상승: {} {} ({}%)", event.getStockCode(), event.getStockName(), event.getChangeRate());
+        }
+        if (event.isNewHigh()) {
+            log.info("🔥 신고가 돌파: {} @ {}", event.getStockName(), event.getHighPrice());
+        }
+    }
+
+    /**
+     * 주식체결 처리 (0B).
+     * Vector 에이전트가 실시간 체결 분석에 활용.
+     */
+    private void handleStockTrade(JsonNode node) {
+        var event = new StockTradeEvent(
+                this,
+                node.path("stk_cd").asText(),
+                node.path("stk_nm").asText(),
+                node.path("cntr_prc").asLong(),
+                node.path("cntr_qty").asLong(),
+                node.path("acc_trde_qty").asLong(),
+                node.path("acc_trde_amt").asLong(),
+                node.path("cntr_tm").asText(),
+                node.path("trde_tp").asText());
+
+        eventPublisher.publishEvent(event);
+
+        if (event.isLargeTrade()) {
+            log.info("💰 대량 체결: {} {} @ {} ({}주)",
+                    event.isBuySide() ? "매수" : "매도",
+                    event.getStockName(), event.getPrice(), event.getVolume());
+        }
     }
 
     /**

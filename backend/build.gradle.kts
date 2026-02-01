@@ -44,8 +44,9 @@ dependencies {
     // RSS Feed Parsing (Rome)
     implementation("com.rometools:rome:2.1.0")
 
-    // WebSocket (ReactorNetty)
+    // WebSocket (ReactorNetty for external, STOMP for internal)
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     // Database
     runtimeOnly("com.h2database:h2")

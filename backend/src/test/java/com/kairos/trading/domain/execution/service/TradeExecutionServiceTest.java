@@ -32,6 +32,9 @@ class TradeExecutionServiceTest {
     private KiwoomOrderClient orderClient;
 
     @Mock
+    private com.kairos.trading.common.client.KiwoomClient kiwoomClient;
+
+    @Mock
     private KiwoomTokenService tokenService;
 
     @Mock

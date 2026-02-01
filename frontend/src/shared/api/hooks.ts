@@ -14,6 +14,17 @@ export function useBalance() {
 }
 
 /**
+ * 계좌 요약 정보 조회 (종합).
+ */
+export function useAccountSummary() {
+    return useQuery({
+        queryKey: queryKeys.accounts.summary(),
+        queryFn: api.getAccountSummary,
+        refetchInterval: 60000, // 1분 주기
+    });
+}
+
+/**
  * 보유 종목 조회.
  */
 export function useHoldings() {
@@ -25,23 +36,23 @@ export function useHoldings() {
 }
 
 /**
- * 추천 종목 조회.
+ * AI 추천 종목 조회.
  */
-export function useTargetStocks(date?: string) {
+export function useStocks(date?: string) {
     return useQuery({
-        queryKey: queryKeys.stocks.targets(date),
-        queryFn: () => api.getTargetStocks(date),
+        queryKey: queryKeys.stocks.list(date),
+        queryFn: () => api.getStocks(date),
     });
 }
 
 /**
  * 종목 상세 분석 조회.
  */
-export function useTargetAnalysis(id: number) {
+export function useStockAnalysis(stockCode: string) {
     return useQuery({
-        queryKey: queryKeys.stocks.analysis(String(id)),
-        queryFn: () => api.getTargetAnalysis(id),
-        enabled: id > 0,
+        queryKey: queryKeys.stocks.analysis(stockCode),
+        queryFn: () => api.getStockAnalysis(stockCode),
+        enabled: !!stockCode,
     });
 }
 

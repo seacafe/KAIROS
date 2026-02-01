@@ -21,6 +21,14 @@ import com.kairos.trading.domain.technical.dto.ChangeRateTop;
 import com.kairos.trading.domain.technical.dto.ViStocksResponse;
 import com.kairos.trading.domain.flow.dto.ThemeGroupResponse;
 import com.kairos.trading.domain.flow.dto.ThemeStocksResponse;
+import com.kairos.trading.domain.execution.dto.OrderRequest;
+import com.kairos.trading.domain.execution.dto.OrderResponse;
+import com.kairos.trading.domain.execution.dto.AccountEvaluationResponse;
+import com.kairos.trading.domain.execution.dto.ContractBalanceResponse;
+import com.kairos.trading.domain.execution.dto.UnfilledOrderResponse;
+import com.kairos.trading.domain.execution.dto.OrderExecutionDetailResponse;
+import com.kairos.trading.domain.technical.dto.PriceTimeSeriesResponse;
+import com.kairos.trading.domain.flow.dto.SectorIndexResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -849,5 +857,734 @@ public class KiwoomClient {
         }
 
         return new ThemeStocksResponse(themeCode, themeName, stocks);
+    }
+
+    // =========================================================================
+    // 주문 API (kt10000 ~ kt10003)
+    // =========================================================================
+
+    /**
+     * 주식 매수 주문 (kt10000).
+     * Aegis 에이전트가 최종 승인된 종목에 대해 신규 매수.
+     *
+     * @param token   접근 토큰
+     * @param request 주문 요청
+     * @return 주문 응답
+     */
+    public OrderResponse placeBuyOrder(String token, OrderRequest request) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("매수 주문 요청: {} {}주 @{}", request.stockCode(), request.quantity(), request.price());
+            try {
+                String requestBody = """
+                        {
+                            "dmst_stex_tp": "KRX",
+                            "stk_cd": "%s",
+                            "ord_qty": "%d",
+                            "ord_uv": "%d",
+                            "trde_tp": "%s",
+                            "cond_uv": ""
+                        }
+                        """.formatted(
+                        request.stockCode(),
+                        request.quantity(),
+                        request.price(),
+                        request.tradeType() != null ? request.tradeType().getCode() : "03");
+
+                var response = restClient.post()
+                        .uri("/api/dostk/ordr")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt10000")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("매수 주문 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Buy order failed");
+                        })
+                        .body(String.class);
+
+                return parseOrderResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("매수 주문 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    /**
+     * 주식 매도 주문 (kt10001).
+     * Aegis 에이전트가 이익 실현 또는 손절매.
+     *
+     * @param token   접근 토큰
+     * @param request 주문 요청
+     * @return 주문 응답
+     */
+    public OrderResponse placeSellOrder(String token, OrderRequest request) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("매도 주문 요청: {} {}주 @{}", request.stockCode(), request.quantity(), request.price());
+            try {
+                String requestBody = """
+                        {
+                            "dmst_stex_tp": "KRX",
+                            "stk_cd": "%s",
+                            "ord_qty": "%d",
+                            "ord_uv": "%d",
+                            "trde_tp": "%s",
+                            "cond_uv": ""
+                        }
+                        """.formatted(
+                        request.stockCode(),
+                        request.quantity(),
+                        request.price(),
+                        request.tradeType() != null ? request.tradeType().getCode() : "03");
+
+                var response = restClient.post()
+                        .uri("/api/dostk/ordr")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt10001")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("매도 주문 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Sell order failed");
+                        })
+                        .body(String.class);
+
+                return parseOrderResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("매도 주문 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    /**
+     * 주식 정정 주문 (kt10002).
+     *
+     * @param token   접근 토큰
+     * @param request 주문 요청 (originalOrderNo 필수)
+     * @return 주문 응답
+     */
+    public OrderResponse modifyOrder(String token, OrderRequest request) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("정정 주문 요청: {} 원주문번호={}", request.stockCode(), request.originalOrderNo());
+            try {
+                String requestBody = """
+                        {
+                            "dmst_stex_tp": "KRX",
+                            "stk_cd": "%s",
+                            "orig_ord_no": "%s",
+                            "ord_qty": "%d",
+                            "ord_uv": "%d",
+                            "trde_tp": "%s"
+                        }
+                        """.formatted(
+                        request.stockCode(),
+                        request.originalOrderNo(),
+                        request.quantity(),
+                        request.price(),
+                        request.tradeType() != null ? request.tradeType().getCode() : "00");
+
+                var response = restClient.post()
+                        .uri("/api/dostk/ordr")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt10002")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("정정 주문 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Modify order failed");
+                        })
+                        .body(String.class);
+
+                return parseOrderResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("정정 주문 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    /**
+     * 주식 취소 주문 (kt10003).
+     *
+     * @param token           접근 토큰
+     * @param stockCode       종목코드
+     * @param originalOrderNo 원주문번호
+     * @param cancelQty       취소수량 (0: 전량취소)
+     * @return 주문 응답
+     */
+    public OrderResponse cancelOrder(String token, String stockCode, String originalOrderNo, int cancelQty) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("취소 주문 요청: {} 원주문번호={} 수량={}", stockCode, originalOrderNo, cancelQty);
+            try {
+                String requestBody = """
+                        {
+                            "dmst_stex_tp": "KRX",
+                            "stk_cd": "%s",
+                            "orig_ord_no": "%s",
+                            "cncl_qty": "%d"
+                        }
+                        """.formatted(stockCode, originalOrderNo, cancelQty);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/ordr")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt10003")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("취소 주문 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Cancel order failed");
+                        })
+                        .body(String.class);
+
+                return parseOrderResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("취소 주문 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private OrderResponse parseOrderResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            return new OrderResponse(
+                    root.path("ord_no").asText(),
+                    root.path("return_code").asInt(),
+                    root.path("return_msg").asText(),
+                    root.path("base_orig_ord_no").asText(null));
+        } catch (Exception e) {
+            log.error("주문 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Order response parse error");
+        }
+    }
+
+    // =========================================================================
+    // 계좌 API (kt00004, kt00005, kt00007, ka10075)
+    // =========================================================================
+
+    /**
+     * 계좌 평가 현황 조회 (kt00004).
+     * Aegis 에이전트가 예수금 확인 및 자금 배분.
+     *
+     * @param token     접근 토큰
+     * @param accountNo 계좌번호
+     * @return 계좌 평가 현황
+     */
+    public AccountEvaluationResponse getAccountEvaluation(String token, String accountNo) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("계좌 평가 현황 조회: {}", accountNo);
+            try {
+                String requestBody = """
+                        {
+                            "acnt_no": "%s",
+                            "qry_tp": "0",
+                            "dmst_stex_tp": "KRX"
+                        }
+                        """.formatted(accountNo);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/acnt")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt00004")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("계좌 평가 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Account evaluation failed");
+                        })
+                        .body(String.class);
+
+                return parseAccountEvaluationResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("계좌 평가 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private AccountEvaluationResponse parseAccountEvaluationResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<AccountEvaluationResponse.StockHolding> holdings = new ArrayList<>();
+
+            JsonNode holdingsNode = root.path("stk_acnt_evlt_prst");
+            if (holdingsNode.isArray()) {
+                for (JsonNode item : holdingsNode) {
+                    holdings.add(new AccountEvaluationResponse.StockHolding(
+                            item.path("stk_cd").asText(),
+                            item.path("stk_nm").asText(),
+                            item.path("rmnd_qty").asInt(),
+                            item.path("avg_prc").asInt(),
+                            item.path("cur_prc").asInt(),
+                            item.path("evlt_amt").asLong(),
+                            item.path("pl_amt").asLong(),
+                            item.path("pl_rt").asDouble()));
+                }
+            }
+
+            return new AccountEvaluationResponse(
+                    root.path("acnt_nm").asText(),
+                    root.path("brch_nm").asText(),
+                    root.path("entr").asLong(),
+                    root.path("d2_entra").asLong(),
+                    root.path("tot_est_amt").asLong(),
+                    root.path("tot_pur_amt").asLong(),
+                    root.path("tdy_lspft").asLong(),
+                    root.path("tdy_lspft_rt").asDouble(),
+                    root.path("lspft").asLong(),
+                    root.path("lspft_rt").asDouble(),
+                    holdings);
+        } catch (Exception e) {
+            log.error("계좌 평가 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Account evaluation parse error");
+        }
+    }
+
+    /**
+     * 체결 잔고 조회 (kt00005).
+     *
+     * @param token 접근 토큰
+     * @return 체결 잔고 응답
+     */
+    public ContractBalanceResponse getContractBalance(String token) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("체결 잔고 조회");
+            try {
+                String requestBody = """
+                        {
+                            "dmst_stex_tp": "KRX"
+                        }
+                        """;
+
+                var response = restClient.post()
+                        .uri("/api/dostk/acnt")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt00005")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("체결 잔고 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Contract balance failed");
+                        })
+                        .body(String.class);
+
+                return parseContractBalanceResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("체결 잔고 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private ContractBalanceResponse parseContractBalanceResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<ContractBalanceResponse.ContractStock> stocks = new ArrayList<>();
+
+            JsonNode stocksNode = root.path("stk_cntr_remn");
+            if (stocksNode.isArray()) {
+                for (JsonNode item : stocksNode) {
+                    stocks.add(new ContractBalanceResponse.ContractStock(
+                            item.path("crd_tp").asText(),
+                            item.path("loan_dt").asText(),
+                            item.path("expr_dt").asText(),
+                            item.path("stk_cd").asText(),
+                            item.path("stk_nm").asText(),
+                            item.path("setl_remn").asInt(),
+                            item.path("cur_qty").asInt(),
+                            item.path("cur_prc").asInt(),
+                            item.path("buy_uv").asInt(),
+                            item.path("pur_amt").asLong(),
+                            item.path("evlt_amt").asLong(),
+                            item.path("evltv_prft").asLong(),
+                            item.path("pl_rt").asDouble()));
+                }
+            }
+
+            return new ContractBalanceResponse(
+                    root.path("entr").asLong(),
+                    root.path("entr_d1").asLong(),
+                    root.path("entr_d2").asLong(),
+                    root.path("pymn_alow_amt").asLong(),
+                    root.path("ord_alowa").asLong(),
+                    root.path("stk_buy_tot_amt").asLong(),
+                    root.path("evlt_amt_tot").asLong(),
+                    root.path("tot_pl_tot").asLong(),
+                    root.path("tot_pl_rt").asDouble(),
+                    stocks);
+        } catch (Exception e) {
+            log.error("체결 잔고 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Contract balance parse error");
+        }
+    }
+
+    /**
+     * 미체결 주문 조회 (ka10075).
+     *
+     * @param token     접근 토큰
+     * @param accountNo 계좌번호
+     * @return 미체결 주문 응답
+     */
+    public UnfilledOrderResponse getUnfilledOrders(String token, String accountNo) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("미체결 주문 조회: {}", accountNo);
+            try {
+                String requestBody = """
+                        {
+                            "acnt_no": "%s",
+                            "dmst_stex_tp": "KRX",
+                            "ord_stts": "0"
+                        }
+                        """.formatted(accountNo);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/acnt")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "ka10075")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("미체결 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Unfilled orders failed");
+                        })
+                        .body(String.class);
+
+                return parseUnfilledOrderResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("미체결 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private UnfilledOrderResponse parseUnfilledOrderResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<UnfilledOrderResponse.UnfilledOrder> orders = new ArrayList<>();
+
+            JsonNode ordersNode = root.path("uncntr_ord");
+            if (ordersNode.isArray()) {
+                for (JsonNode item : ordersNode) {
+                    orders.add(new UnfilledOrderResponse.UnfilledOrder(
+                            item.path("ord_no").asText(),
+                            item.path("ord_tm").asText(),
+                            item.path("stk_cd").asText(),
+                            item.path("stk_nm").asText(),
+                            item.path("ord_tp").asText(),
+                            item.path("ord_qty").asInt(),
+                            item.path("ord_pric").asInt(),
+                            item.path("cntr_qty").asInt(),
+                            item.path("uncntr_qty").asInt(),
+                            item.path("cur_prc").asInt(),
+                            item.path("ord_stts").asText()));
+                }
+            }
+
+            return new UnfilledOrderResponse(orders);
+        } catch (Exception e) {
+            log.error("미체결 주문 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Unfilled orders parse error");
+        }
+    }
+
+    // ========================================================================
+    // 추가 조회 API
+    // ========================================================================
+
+    /**
+     * 주식일주월시분요청 (ka10005).
+     * Vector 에이전트가 다양한 시간대 시세 분석에 활용.
+     *
+     * @param token     접근 토큰
+     * @param stockCode 종목코드
+     * @param timeType  시간구분 ("D":일, "W":주, "M":월, "m":분)
+     * @return 시계열 데이터
+     */
+    public PriceTimeSeriesResponse getPriceTimeSeries(String token, String stockCode, String timeType) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("주식 시계열 조회: {} ({})", stockCode, timeType);
+            try {
+                String requestBody = """
+                        {
+                            "stk_cd": "%s",
+                            "dt_gubun": "%s",
+                            "dmst_stex_tp": "KRX"
+                        }
+                        """.formatted(stockCode, timeType);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/stkinfo")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "ka10005")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("시계열 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Price time series failed");
+                        })
+                        .body(String.class);
+
+                return parsePriceTimeSeriesResponse(response, stockCode);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("시계열 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private PriceTimeSeriesResponse parsePriceTimeSeriesResponse(String json, String stockCode) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<PriceTimeSeriesResponse.TimeSeriesData> timeSeries = new ArrayList<>();
+
+            JsonNode dataNode = root.path("stk_dt_pole");
+            if (dataNode.isArray()) {
+                for (JsonNode item : dataNode) {
+                    timeSeries.add(new PriceTimeSeriesResponse.TimeSeriesData(
+                            item.path("dt").asText(),
+                            item.path("open_prc").asLong(),
+                            item.path("hgh_prc").asLong(),
+                            item.path("low_prc").asLong(),
+                            item.path("clos_prc").asLong(),
+                            item.path("trde_qty").asLong(),
+                            item.path("trde_amt").asLong(),
+                            item.path("adj_clos_prc").asLong()));
+                }
+            }
+
+            return new PriceTimeSeriesResponse(
+                    stockCode,
+                    root.path("stk_nm").asText(),
+                    root.path("cur_prc").asLong(),
+                    root.path("flu_prc").asLong(),
+                    root.path("flu_rt").asDouble(),
+                    root.path("acc_trde_qty").asLong(),
+                    timeSeries);
+        } catch (Exception e) {
+            log.error("시계열 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Price time series parse error");
+        }
+    }
+
+    /**
+     * 업종현재가요청 (ka20001).
+     * Sonar 에이전트가 업종 지수 및 섹터 흐름 파악에 활용.
+     *
+     * @param token      접근 토큰
+     * @param sectorCode 업종코드
+     * @return 업종 지수 데이터
+     */
+    public SectorIndexResponse getSectorIndex(String token, String sectorCode) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("업종 지수 조회: {}", sectorCode);
+            try {
+                String requestBody = """
+                        {
+                            "upjong_cd": "%s",
+                            "dmst_stex_tp": "KRX"
+                        }
+                        """.formatted(sectorCode);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/stkinfo")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "ka20001")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("업종 지수 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Sector index failed");
+                        })
+                        .body(String.class);
+
+                return parseSectorIndexResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("업종 지수 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private SectorIndexResponse parseSectorIndexResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<SectorIndexResponse.SectorStock> stocks = new ArrayList<>();
+
+            JsonNode stocksNode = root.path("upjong_stk_prst");
+            if (stocksNode.isArray()) {
+                for (JsonNode item : stocksNode) {
+                    stocks.add(new SectorIndexResponse.SectorStock(
+                            item.path("stk_cd").asText(),
+                            item.path("stk_nm").asText(),
+                            item.path("cur_prc").asLong(),
+                            item.path("pred_pre").asLong(),
+                            item.path("flu_rt").asDouble(),
+                            item.path("trde_qty").asLong()));
+                }
+            }
+
+            return new SectorIndexResponse(
+                    root.path("upjong_cd").asText(),
+                    root.path("upjong_nm").asText(),
+                    root.path("cur_prc").asDouble(),
+                    root.path("pred_jisu").asDouble(),
+                    root.path("flu_jisu").asDouble(),
+                    root.path("flu_rt").asDouble(),
+                    root.path("acc_trde_qty").asLong(),
+                    root.path("acc_trde_amt").asLong(),
+                    root.path("open_jisu").asDouble(),
+                    root.path("hgh_jisu").asDouble(),
+                    root.path("low_jisu").asDouble(),
+                    stocks);
+        } catch (Exception e) {
+            log.error("업종 지수 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Sector index parse error");
+        }
+    }
+
+    /**
+     * 계좌별주문체결내역상세요청 (kt00007).
+     * Aegis 에이전트가 당일 체결 내역 상세 조회에 활용.
+     *
+     * @param token     접근 토큰
+     * @param accountNo 계좌번호
+     * @param startDate 시작일자 (YYYYMMDD)
+     * @param endDate   종료일자 (YYYYMMDD)
+     * @return 주문체결 상세 내역
+     */
+    public OrderExecutionDetailResponse getOrderExecutionDetail(String token, String accountNo,
+            String startDate, String endDate) {
+        return gatekeeper.execute(ApiType.KIWOOM, () -> {
+            log.info("체결 내역 상세 조회: {} ({} ~ {})", accountNo, startDate, endDate);
+            try {
+                String requestBody = """
+                        {
+                            "acnt_no": "%s",
+                            "strt_dt": "%s",
+                            "end_dt": "%s",
+                            "ord_stts": "",
+                            "dmst_stex_tp": "KRX"
+                        }
+                        """.formatted(accountNo, startDate, endDate);
+
+                var response = restClient.post()
+                        .uri("/api/dostk/acnt")
+                        .header("Authorization", "Bearer " + token)
+                        .header("tr_id", "kt00007")
+                        .header("appkey", appKey)
+                        .header("appsecret", appSecret)
+                        .header("cont-yn", "N")
+                        .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .body(requestBody)
+                        .retrieve()
+                        .onStatus(HttpStatusCode::isError, (req, res) -> {
+                            log.error("체결 내역 조회 실패: {} - {}", res.getStatusCode(), res.getStatusText());
+                            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Order execution detail failed");
+                        })
+                        .body(String.class);
+
+                return parseOrderExecutionDetailResponse(response);
+            } catch (BusinessException e) {
+                throw e;
+            } catch (Exception e) {
+                log.error("체결 내역 조회 중 예외 발생", e);
+                throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, e);
+            }
+        });
+    }
+
+    private OrderExecutionDetailResponse parseOrderExecutionDetailResponse(String json) {
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            List<OrderExecutionDetailResponse.OrderExecution> executions = new ArrayList<>();
+
+            JsonNode dataNode = root.path("acnt_ord_cntr_prps_dtl");
+            if (dataNode.isArray()) {
+                for (JsonNode item : dataNode) {
+                    executions.add(new OrderExecutionDetailResponse.OrderExecution(
+                            item.path("ord_no").asText(),
+                            item.path("stk_cd").asText(),
+                            item.path("stk_nm").asText(),
+                            item.path("ord_tp").asText(),
+                            item.path("trde_tp").asText(),
+                            item.path("ord_qty").asInt(),
+                            item.path("ord_uv").asInt(),
+                            item.path("cntr_qty").asInt(),
+                            item.path("cntr_uv").asInt(),
+                            item.path("uncntr_qty").asInt(),
+                            item.path("ord_tm").asText(),
+                            item.path("cntr_tm").asText(),
+                            item.path("ord_stts").asText(),
+                            item.path("orig_ord_no").asText(),
+                            item.path("cntr_amt").asLong(),
+                            item.path("curncy_ord_tp").asText(),
+                            item.path("dmst_stex_tp").asText()));
+                }
+            }
+
+            return new OrderExecutionDetailResponse(
+                    root.path("cont_yn").asText(),
+                    root.path("next_key").asText(),
+                    executions);
+        } catch (Exception e) {
+            log.error("체결 내역 응답 파싱 실패: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.KIWOOM_API_ERROR, "Order execution detail parse error");
+        }
     }
 }

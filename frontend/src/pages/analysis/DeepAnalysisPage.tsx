@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTargetAnalysis } from '@/shared/api/hooks';
+import { useStockAnalysis } from '@/shared/api/hooks';
 import { CandlestickChart } from '@/features/dashboard/CandlestickChart';
 import { Search, TrendingUp, TrendingDown, AlertTriangle, CheckCircle } from 'lucide-react';
 
@@ -17,9 +17,7 @@ interface AgentAnalysis {
 export function DeepAnalysisPage() {
     const [stockCode, setStockCode] = useState('');
     const [searchedCode, setSearchedCode] = useState('');
-    const { data: analysis, isLoading, error } = useTargetAnalysis(
-        searchedCode ? parseInt(searchedCode) : 0
-    );
+    const { data: analysis, isLoading, error } = useStockAnalysis(searchedCode);
 
     const handleSearch = () => {
         if (stockCode.trim()) {
@@ -146,8 +144,8 @@ export function DeepAnalysisPage() {
                                 <div className="text-3xl font-bold font-mono">
                                     {analysis.totalScore}점
                                 </div>
-                                <div className={`text-sm ${analysis.recommendation === 'BUY' ? 'text-green-400' : analysis.recommendation === 'SELL' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                    {analysis.recommendation}
+                                <div className={`text-sm ${analysis.recommendation === 'BUY' ? 'text-green-400' : analysis.recommendation === 'REJECT' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                    {analysis.recommendation ?? analysis.decision}
                                 </div>
                             </div>
                         </div>

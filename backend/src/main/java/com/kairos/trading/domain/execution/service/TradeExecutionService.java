@@ -1,6 +1,7 @@
 package com.kairos.trading.domain.execution.service;
 
 import com.kairos.trading.common.client.BalanceResponse;
+import com.kairos.trading.common.client.KiwoomClient;
 import com.kairos.trading.common.client.KiwoomOrderClient;
 import com.kairos.trading.common.client.KiwoomTokenService;
 import com.kairos.trading.common.client.OrderResult;
@@ -30,6 +31,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class TradeExecutionService {
 
     private final KiwoomOrderClient orderClient;
+    private final KiwoomClient kiwoomClient;
     private final KiwoomTokenService tokenService;
     private final TradeLogService tradeLogService;
 
@@ -195,5 +197,19 @@ public class TradeExecutionService {
 
         submitOrder(order);
         processNextOrder();
+    }
+
+    /**
+     * 계좌별 체결 내역 상세 조회 (kt00007).
+     *
+     * @param accountNo 계좌번호
+     * @param fromDate  조회 시작일 (YYYYMMDD)
+     * @param toDate    조회 종료일 (YYYYMMDD)
+     */
+    public com.kairos.trading.domain.execution.dto.OrderExecutionDetailResponse fetchExecutionDetails(
+            String accountNo, String fromDate, String toDate) {
+        log.info("[Aegis] 체결 내역 조회: {} ({} ~ {})", accountNo, fromDate, toDate);
+        String token = tokenService.getValidToken();
+        return kiwoomClient.getOrderExecutionDetail(token, accountNo, fromDate, toDate);
     }
 }

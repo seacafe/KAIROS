@@ -16,7 +16,7 @@ interface CandlestickData {
     high: number;
     low: number;
     close: number;
-    volume: number;
+    volume?: number;
     // 매매 타점 (optional)
     buyPoint?: number;
     sellPoint?: number;
@@ -85,7 +85,7 @@ export function CandlestickChart({ data, height = 400 }: CandlestickChartProps) 
                             borderRadius: '8px',
                         }}
                         labelStyle={{ color: '#888' }}
-                        formatter={(value: number) => [`₩${value.toLocaleString()}`, '']}
+                        formatter={(value) => [`₩${(value as number)?.toLocaleString() ?? 0}`, '']}
                     />
 
                     {/* 캔들 바디 */}

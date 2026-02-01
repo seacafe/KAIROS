@@ -51,13 +51,13 @@
     * **[Circuit Breaker]:** 시장 심리 점수(Market Score)가 사용자 설정 기준(Stable 50 / Neutral 40 / Aggressive 30) 미만이거나 지수가 급락(-2%) 중이면 SystemStatus를 RiskOff로 전환하고 **신규 매수를 전면 차단**합니다.
 2. **Signal Trigger (Vector + Sonar):**
     * **Vector (The Eye):**
-          * **Java Layer:** 실시간 틱/분봉 데이터를 연산하여 `NanoBanana` 패턴(수렴+폭발)을 0.01초 내에 감지.
-          * **AI Layer:** Java가 감지한 패턴과 **호가창 스냅샷(`0D`)**을 Gemini Flash에게 전송하여, 허매수 여부 및 정밀 진입가를 산출.
-    * **Sonar (The Flow):** 패턴 완성 순간, 해당 종목의 **실시간 프로그램 수급(0w)**과 **체결강도**를 확인합니다.
+          ***Java Layer:** 실시간 틱/분봉 데이터와 시계열 데이터(`ka10005`)를 연산하여 `NanoBanana` 패턴(수렴+폭발)을 0.01초 내에 감지. 이동평균선 계산은 `VectorService.calculateMovingAverages()`가 담당.
+          * **AI Layer:** Java가 감지한 패턴과 **호가창 스냅샷(`0D`)**, **실시간 기세(`0A`)**, **체결 정보(`0B`)**를 Gemini Flash에게 전송하여, 허매수 여부 및 정밀 진입가를 산출.
+    * **Sonar (The Flow):** 패턴 완성 순간, 해당 종목의 **실시간 프로그램 수급(0w)**, **업종 지수(`ka20001`)**, 그리고 **체결강도**를 확인합니다.
     * **Event: 두 조건(패턴+수급) 충족 시 AnalysisResult (매수 권고)를 Nexus에게 전송합니다.
 3. **Strategy Check (Nexus - The Brain):**
     * **Re-entry Policy:**
-          * `TradeLog`를 조회하여 당일 매매 이력을 확인합니다.
+          *`TradeLog`를 조회하여 당일 매매 이력을 확인합니다.
           * 만약 매매 이력이 있다면, 설정된 **'재진입 허용 여부'** 및 사용자 성향(Aggressive/Neutral/Stable)에 따른 **'쿨타임'**을 체크하여 진입 여부를 결정합니다.
           * 조건 불만족 시 신호를 기각(Reject)합니다.
     * **Approval:** 승인 시 `ExecutionOrder(BUY)` 객체를 생성하여 Aegis에게 전달합니다.

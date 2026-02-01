@@ -1,7 +1,8 @@
-import { useTargetStocks, useBalance, useTradeLogs, useHoldings } from '@/shared/api/hooks';
+import { useStocks, useAccountSummary, useTradeLogs, useHoldings } from '@/shared/api/hooks';
 import { TargetStockCard } from '@/features/dashboard/TargetStockCard';
 import { PortfolioHeatmap } from '@/features/dashboard/PortfolioHeatmap';
 import { RealtimeLogViewer } from '@/features/dashboard/RealtimeLogViewer';
+import { AccountSummaryCard } from '@/features/dashboard/AccountSummaryCard';
 import { useAccountStore } from '@/stores/accountStore';
 import { useEffect } from 'react';
 
@@ -9,8 +10,8 @@ import { useEffect } from 'react';
  * 대시보드 페이지.
  */
 export function DashboardPage() {
-    const { data: targets, isLoading: targetsLoading } = useTargetStocks();
-    const { data: balance } = useBalance();
+    const { data: stocks, isLoading: stocksLoading } = useStocks();
+    const { data: summary } = useAccountSummary();
     const { data: tradeLogs } = useTradeLogs();
     const { data: holdings } = useHoldings();
 
@@ -18,14 +19,14 @@ export function DashboardPage() {
 
     // 잔고 정보를 전역 스토어에 반영
     useEffect(() => {
-        if (balance) {
+        if (summary) {
             setAccount({
-                totalAsset: balance.totalAsset,
-                deposit: balance.deposit,
-                dailyProfit: balance.dailyProfitLoss,
+                totalAsset: summary.totalAsset,
+                deposit: summary.deposit,
+                dailyProfit: summary.dailyProfitLoss,
             });
         }
-    }, [balance, setAccount]);
+    }, [summary, setAccount]);
 
     return (
         <div className="space-y-6">
@@ -37,20 +38,23 @@ export function DashboardPage() {
                 </p>
             </div>
 
+            {/* 계좌 요약 (New) */}
+            <AccountSummaryCard />
+
             {/* 그리드 레이아웃 */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
                 {/* 추천 종목 카드 */}
                 <div className="col-span-2">
                     <h2 className="mb-4 text-lg font-semibold">추천 종목</h2>
-                    {targetsLoading ? (
+                    {stocksLoading ? (
                         <div className="flex h-48 items-center justify-center text-muted-foreground">
                             로딩 중...
                         </div>
-                    ) : targets && targets.length > 0 ? (
+                    ) : stocks && stocks.length > 0 ? (
                         <div className="grid gap-4 md:grid-cols-2">
-                            {targets.map((target) => (
-                                <TargetStockCard key={target.id} target={target} />
+                            {stocks.map((stock) => (
+                                <TargetStockCard key={stock.stockCode} target={stock} />
                             ))}
                         </div>
                     ) : (

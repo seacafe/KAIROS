@@ -26,6 +26,8 @@ replay_pid*
 ### 민감 정보 (Sensitive Information) ###
 **/application-secret.yml
 **/application-secret.properties
+**/application-dev.yml
+**/application-prod.yml
 **/*.env
 **/.env.*
 

@@ -42,7 +42,7 @@ public class KiwoomOrderClient {
     private final String appKey;
     private final String appSecret;
     private final String accountNo;
-    private final boolean isVirtual;
+    private final boolean isVirtual; // app-key prefix로 자동 감지
 
     // 주문 구분 코드
     private static final String ORDER_TYPE_LIMIT = "00"; // 지정가
@@ -74,6 +74,8 @@ public class KiwoomOrderClient {
                 .requestFactory(factory)
                 .baseUrl(baseUrl)
                 .build();
+
+        log.info("[KiwoomOrderClient] 초기화 완료 - 모의투자 모드: {}", this.isVirtual);
     }
 
     /**

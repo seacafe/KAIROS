@@ -31,10 +31,10 @@ export const api = {
     getHoldings: () => apiClient<Holding[]>('/accounts/holdings'),
 
     // 추천 종목
-    getTargetStocks: (date?: string) =>
-        apiClient<TargetStock[]>(`/targets${date ? `?date=${date}` : ''}`),
-    getTargetAnalysis: (id: number) =>
-        apiClient<TargetStock>(`/targets/${id}/analysis`),
+    getStocks: (date?: string) =>
+        apiClient<TargetStock[]>(`/stocks${date ? `?date=${date}` : ''}`),
+    getStockAnalysis: (stockCode: string) =>
+        apiClient<TargetStock>(`/stocks/${stockCode}/analysis`),
 
     // 매매 로그
     getTradeLogs: () => apiClient<TradeLog[]>('/trades'),
@@ -60,9 +60,34 @@ export const api = {
         }),
     deleteRssFeed: (id: number) =>
         apiClient<void>(`/settings/rss-feeds/${id}`, { method: 'DELETE' }),
+
+    // 계좌 요약 (New)
+    getAccountSummary: () => apiClient<AccountSummary>('/accounts/summary'),
 };
 
 // 타입 정의
+export interface AccountSummary {
+    accountNo: string;
+    totalAsset: number;
+    deposit: number;
+    d2Deposit: number;
+    dailyProfitLoss: number;
+    dailyReturnRate: number;
+    totalProfitLoss: number;
+    totalReturnRate: number;
+    holdingCount: number;
+    holdings: Holding[];
+    maxProfit: number;
+    maxLoss: number;
+    bestPerformer: string;
+    worstPerformer: string;
+}
+
+export interface HoldingSummary {
+    stockCode: string;
+    stockName: string;
+    profitRate: number;
+}
 export interface AccountBalance {
     accountNo: string;
     totalAsset: number;
@@ -84,9 +109,8 @@ export interface Holding {
 }
 
 export interface TargetStock {
-    id: number;
-    baseDate: string;
     stockCode: string;
+    baseDate: string;
     stockName: string;
     decision: 'BUY' | 'WATCH' | 'REJECT';
     riskLevel: 'HIGH' | 'MEDIUM' | 'LOW';
@@ -96,6 +120,26 @@ export interface TargetStock {
     status: string;
     agentScores: Record<string, number>;
     nexusReason: string;
+    // 분석 리포트용 추가 필드 (optional)
+    sentinelScore?: number;
+    axiomScore?: number;
+    vectorScore?: number;
+    resonanceScore?: number;
+    sonarScore?: number;
+    totalScore?: number;
+    recommendation?: 'BUY' | 'WATCH' | 'REJECT';
+    chartData?: CandlestickData[];
+    nexusComment?: string;
+}
+
+// 캔들스틱 차트 데이터
+export interface CandlestickData {
+    date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume?: number;
 }
 
 export interface TradeLog {

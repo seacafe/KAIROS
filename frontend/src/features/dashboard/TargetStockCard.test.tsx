@@ -4,9 +4,8 @@ import { TargetStock } from '@/shared/api/client'
 
 describe('TargetStockCard', () => {
     const mockTarget: TargetStock = {
-        id: 1,
-        baseDate: '20240101',
         stockCode: '005930',
+        baseDate: '20240101',
         stockName: '삼성전자',
         decision: 'BUY',
         riskLevel: 'LOW',

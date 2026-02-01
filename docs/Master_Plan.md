@@ -56,6 +56,7 @@
 
 - [/] **Kiwoom API Client:** `ApiGatekeeper`를 경유하는 `RestClient`.
   - [x] `au10001`(토큰), `ka10001`(기본정보) 등 기본 TR 구현.
+  - [x] **`ka10005`**(시계열), **`ka20001`**(업종지수), **`kt00007`**(체결상세) 추가 구현.
   - [/] 주문 전송 메서드 실제 동작 (현재 안전장치 적용됨).
 - [x] **Mock Server:** `WireMock`을 사용하여 Kiwoom API 응답 모킹(TDD용).
 - [x] **Gemini Client:** LangChain4j 설정. `Flash`(분석가용)와 `Pro`(전략가용) 모델 Bean 분리.
@@ -103,6 +104,7 @@
 
 - [/] **Kiwoom WebSocket:** `ReactorNettyWebSocketClient` 구현.
   - [x] `00`(체결), `0w`(프로그램), `1h`(VI) 수신 로직 구현.
+  - [x] **`0A`**(주식기세), **`0B`**(주식체결), **`0D`**(호가잔량), `04`(잔고) 이벤트 핸들러 추가.
   - [ ] 실제 서버 연결 (`websocketUrl` 변경 필요).
 - [x] **Event System:** Spring `ApplicationEventPublisher`를 이용해 수신된 틱 데이터를 에이전트에게 전파.
 

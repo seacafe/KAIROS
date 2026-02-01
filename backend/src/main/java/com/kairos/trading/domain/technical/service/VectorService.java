@@ -1,6 +1,9 @@
 package com.kairos.trading.domain.technical.service;
 
 import com.kairos.trading.common.ai.AgentResponse;
+import com.kairos.trading.common.client.KiwoomClient;
+import com.kairos.trading.domain.technical.dto.MovingAverage;
+import com.kairos.trading.domain.technical.dto.PriceTimeSeriesResponse;
 import com.kairos.trading.domain.technical.dto.TechnicalAnalysisDto;
 import com.kairos.trading.domain.technical.agent.VectorAiClient;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.Map;
  * 1. NanoBanana 패턴 감지
  * 2. 호가창 분석 (허매수벽 감지)
  * 3. 정밀 진입가/목표가 산출
+ * 4. 이동평균선(SMA) 데이터 계산 (Kiwoom API 연동)
  */
 @Slf4j
 @Service
@@ -24,6 +28,7 @@ public class VectorService {
 
     private final VectorAiClient vectorAiClient;
     private final NanoBananaCalculator nanoBananaCalculator;
+    private final KiwoomClient kiwoomClient;
 
     /**
      * 차트 및 호가창을 AI로 분석한다.
@@ -102,6 +107,46 @@ public class VectorService {
                         "targetPrice", result.targetPrice(),
                         "stopLossPrice", result.stopLossPrice(),
                         "isFakeWall", result.isFakeWall()));
+    }
+
+    /**
+     * 종목의 5일, 20일, 60일 단순이동평균(SMA)을 계산한다.
+     * Kiwoom API (ka10005)를 사용한다.
+     */
+    public MovingAverage calculateMovingAverages(String stockCode) {
+        try {
+            // TODO: 실제 토큰 관리 로직 적용 필요. 현재는 더미 토큰 사용.
+            String dummyToken = "vector-agent-token";
+            var response = kiwoomClient.getPriceTimeSeries(dummyToken, stockCode, "D");
+
+            if (response == null || response.timeSeries() == null || response.timeSeries().isEmpty()) {
+                log.warn("[Vector] 시계열 데이터 없음: {}", stockCode);
+                return new MovingAverage(0, 0, 0);
+            }
+
+            var timeSeries = response.timeSeries();
+            double ma5 = calculateSma(timeSeries, 5);
+            double ma20 = calculateSma(timeSeries, 20);
+            double ma60 = calculateSma(timeSeries, 60);
+
+            return new MovingAverage(ma5, ma20, ma60);
+
+        } catch (Exception e) {
+            log.error("[Vector] SMA 계산 실패: {} - {}", stockCode, e.getMessage());
+            return new MovingAverage(0, 0, 0);
+        }
+    }
+
+    private double calculateSma(java.util.List<PriceTimeSeriesResponse.TimeSeriesData> data, int period) {
+        if (data.size() < period) {
+            return 0.0;
+        }
+
+        double sum = 0;
+        for (int i = 0; i < period; i++) {
+            sum += data.get(i).closePrice();
+        }
+        return sum / period;
     }
 
     private String determineDecision(TechnicalAnalysisDto result) {

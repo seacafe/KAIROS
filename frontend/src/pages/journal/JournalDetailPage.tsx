@@ -76,11 +76,11 @@ export function JournalDetailPage() {
             </div>
 
             {/* AI 복기 */}
-            {journal.aiReview && (
+            {journal.aiReviewContent && (
                 <section className="rounded-xl border border-border bg-card p-6">
                     <h2 className="mb-4 text-lg font-semibold">🤖 AI 복기</h2>
                     <div className="prose prose-invert max-w-none">
-                        <ReactMarkdown>{journal.aiReview}</ReactMarkdown>
+                        <ReactMarkdown>{journal.aiReviewContent}</ReactMarkdown>
                     </div>
                 </section>
             )}

@@ -1,16 +1,9 @@
 import { useMemo } from 'react';
 import { Treemap, ResponsiveContainer, Tooltip } from 'recharts';
-
-interface HoldingData {
-    stockCode: string;
-    stockName: string;
-    currentValue: number;
-    profitLoss: number;
-    profitRate: number;
-}
+import type { Holding } from '@/shared/api/client';
 
 interface PortfolioHeatmapProps {
-    holdings: HoldingData[];
+    holdings: Holding[];
     height?: number;
 }
 
@@ -23,7 +16,7 @@ export function PortfolioHeatmap({ holdings, height = 300 }: PortfolioHeatmapPro
     const treeData = useMemo(() => {
         return holdings.map((holding) => ({
             name: holding.stockName,
-            size: holding.currentValue,
+            size: holding.quantity * holding.currentPrice, // 평가금액 계산
             profitRate: holding.profitRate,
             profitLoss: holding.profitLoss,
             // 수익률에 따른 색상
@@ -56,8 +49,8 @@ export function PortfolioHeatmap({ holdings, height = 300 }: PortfolioHeatmapPro
                             border: '1px solid #333',
                             borderRadius: '8px',
                         }}
-                        formatter={(value: number, name: string, props: any) => [
-                            `₩${value.toLocaleString()} (${props.payload.profitRate > 0 ? '+' : ''}${props.payload.profitRate.toFixed(2)}%)`,
+                        formatter={(value, _name, props) => [
+                            `₩${(value as number)?.toLocaleString() ?? 0} (${props.payload.profitRate > 0 ? '+' : ''}${props.payload.profitRate?.toFixed(2) ?? 0}%)`,
                             props.payload.name,
                         ]}
                     />
